@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assessment Competenze — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0d;
+    --cream: #f7f4ef;
+    --warm: #ede8df;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --rust: #b85c38;
+    --sage: #4a7c59;
+    --slate: #4a5568;
+    --divider: #d9d3c7;
+    --white: #ffffff;
+    --pill-bg: #f0ebe2;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .brand { display: flex; flex-direction: column; gap: 2px; }
+  .brand-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    color: var(--gold);
+  }
+  .brand-sub {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #9a9489;
+    font-weight: 400;
+  }
+
+  .role-tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.07);
+    padding: 4px;
+    border-radius: 8px;
+  }
+  .role-tab {
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    transition: all 0.2s;
+    background: transparent;
+    color: #9a9489;
+    letter-spacing: 0.02em;
+  }
+  .role-tab.active {
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .role-tab:hover:not(.active) {
+    background: rgba(255,255,255,0.1);
+    color: var(--cream);
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 73px);
+  }
+
+  /* ── SIDEBAR ── */
+  sidebar {
+    background: var(--warm);
+    border-right: 1px solid var(--divider);
+    padding: 28px 0;
+    position: sticky;
+    top: 73px;
+    height: calc(100vh - 73px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #9a8f80;
+    padding: 0 20px 10px;
+    margin-top: 8px;
+  }
+
+  .macro-group {
+    margin-bottom: 4px;
+  }
+
+  .macro-btn {
+    width: 100%;
+    text-align: left;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .macro-btn:hover { background: rgba(0,0,0,0.04); }
+  .macro-btn.active { background: rgba(201,168,76,0.15); color: #7a5c1a; }
+
+  .macro-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .macro-dot-label { display: flex; align-items: center; gap: 9px; }
+
+  .macro-chevron {
+    font-size: 10px;
+    color: #9a8f80;
+    transition: transform 0.2s;
+  }
+  .macro-btn.open .macro-chevron { transform: rotate(90deg); }
+
+  .comp-list {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.25s ease;
+  }
+  .comp-list.open { max-height: 600px; }
+
+  .comp-btn {
+    width: 100%;
+    text-align: left;
+    padding: 8px 20px 8px 37px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    color: var(--slate);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .comp-btn::before {
+    content: '';
+    position: absolute;
+    left: 26px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--divider);
+    transition: background 0.15s;
+  }
+  .comp-btn:hover { background: rgba(0,0,0,0.03); color: var(--ink); }
+  .comp-btn:hover::before { background: var(--gold); }
+  .comp-btn.active {
+    color: var(--ink);
+    font-weight: 600;
+    background: rgba(201,168,76,0.12);
+  }
+  .comp-btn.active::before { background: var(--gold); }
+
+  /* ── MAIN ── */
+  main {
+    padding: 32px 40px;
+    overflow-y: auto;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── OVERVIEW CARDS ── */
+  .overview-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .overview-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--ink);
+  }
+  .overview-sub {
+    font-size: 12px;
+    color: #9a8f80;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: #9a8f80; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* ── MACRO AREA CARDS ── */
+  .macro-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .macro-card {
+    background: var(--white);
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    padding: 20px 22px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .macro-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 10px 0 0 10px;
+  }
+  .macro-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
+  .macro-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    margin-bottom: 6px;
+    padding-left: 10px;
+  }
+  .macro-card-meta { font-size: 12px; color: #9a8f80; padding-left: 10px; }
+  .macro-card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding-left: 10px; }
+  .chip {
+    background: var(--pill-bg);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: #6b5e4a;
+    font-weight: 500;
+  }
+
+  /* ── COMPETENZA DETAIL VIEW ── */
+  .detail-header {
+    margin-bottom: 28px;
+  }
+  .breadcrumb { font-size: 12px; color: #9a8f80; margin-bottom: 8px; letter-spacing: 0.03em; }
+  .breadcrumb span { color: var(--gold); }
+  .detail-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .detail-declaratoria {
+    background: var(--warm);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--slate);
+    max-width: 760px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9a8f80;
+    margin: 28px 0 14px;
+  }
+
+  /* ── DRIVER TABLE ── */
+  .driver-grid { display: flex; flex-direction: column; gap: 10px; max-width: 800px; }
+  .driver-row {
+    background: var(--white);
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .driver-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .driver-desc {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.55;
+  }
+
+  /* ── QUESTIONS ── */
+  .question-cards { display: flex; flex-direction: column; gap: 12px; max-width: 800px; }
+  .question-card {
+    background: var(--white);
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    padding: 18px 20px;
+    position: relative;
+  }
+  .q-num {
+    position: absolute;
+    top: 14px; right: 16px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: #f0ebe2;
+    font-style: italic;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .q-type {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+  .q-type.behavioral { background: rgba(74,124,89,0.12); color: var(--sage); }
+  .q-type.situational { background: rgba(184,92,56,0.12); color: var(--rust); }
+  .q-text { font-size: 13.5px; line-height: 1.65; color: var(--ink); padding-right: 40px; }
+
+  /* ── SEARCH ── */
+  .search-bar-wrap { margin-bottom: 28px; }
+  .search-bar {
+    width: 100%;
+    max-width: 480px;
+    padding: 10px 16px 10px 38px;
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    background: var(--white);
+    color: var(--ink);
+    outline: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%239a8f80' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 12px center;
+    transition: border-color 0.2s;
+  }
+  .search-bar:focus { border-color: var(--gold); }
+
+  .no-results { color: #9a8f80; font-style: italic; font-size: 13px; padding: 20px 0; }
+
+  /* macro colors */
+  .c0::before, .c0 { --mc: #4a7c59; }
+  .c1::before, .c1 { --mc: #4a6a9c; }
+  .c2::before, .c2 { --mc: #8c5a7e; }
+  .c3::before, .c3 { --mc: #b85c38; }
+  .c4::before, .c4 { --mc: #c9a84c; }
+  .c5::before, .c5 { --mc: #4a7c7c; }
+
+  .macro-dot.c0 { background: #4a7c59; }
+  .macro-dot.c1 { background: #4a6a9c; }
+  .macro-dot.c2 { background: #8c5a7e; }
+  .macro-dot.c3 { background: #b85c38; }
+  .macro-dot.c4 { background: #c9a84c; }
+  .macro-dot.c5 { background: #4a7c7c; }
+
+  .macro-card.c0::before { background: #4a7c59; }
+  .macro-card.c1::before { background: #4a6a9c; }
+  .macro-card.c2::before { background: #8c5a7e; }
+  .macro-card.c3::before { background: #b85c38; }
+  .macro-card.c4::before { background: #c9a84c; }
+  .macro-card.c5::before { background: #4a7c7c; }
+
+  .q-role-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-left: 6px;
+    background: #f0ebe2;
+    color: #7a6a54;
+  }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; }
+    sidebar { position: static; height: auto; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .macro-cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-title">Assessment Competenze</div>
+    <div class="brand-sub">Skillvue · Framework di Valutazione</div>
+  </div>
+  <div class="role-tabs">
+    <button class="role-tab active" onclick="switchRole('sa')">Sales Advisor</button>
+    <button class="role-tab" onclick="switchRole('sm')">Store Manager</button>
+  </div>
+</header>
+
+<div class="container">
+  <sidebar id="sidebar"></sidebar>
+  <main id="main"></main>
+</div>
+
+<script>
+// ────────────────────────────────────────────────────────────
+// DATA
+// ────────────────────────────────────────────────────────────
+
+const DATA = {
+  sa: {
+    macro: [
+      {
+        name: "Customer & Sales Excellence",
+        color: "c0",
+        competenze: [
+          {
+            name: "Orientamento ai risultati",
+            dec: "Assicurare che i risultati siano dello standard richiesto e siano prodotti in tempo, attraverso lavoro sistematico e controllo della qualità.",
+            drivers: [
+              { name: "Mostrare orientamento al cliente", desc: "Comprendere e prioritizzare le richieste dei clienti e rispondere ai feedback." },
+              { name: "Definire standard di qualità", desc: "Definire e comunicare criteri rigorosi nei risultati ottenuti." },
+              { name: "Lavorare in modo sistematico", desc: "Seguire procedure organizzative e flussi di lavoro logici per mantenere consistenza ed efficienza." },
+              { name: "Garantire procedure di qualità", desc: "Mantenere processi e controlli documentati che sostengano la qualità degli output." },
+              { name: "Mantenere una buona produttività", desc: "Mantenere tassi e efficienza dei risultati per raggiungere target operativi." }
+            ],
+            questions: [
+              { text: "Descrivi un'interazione difficile con un cliente che hai affrontato sul lavoro. Quali azioni specifiche hai intrapreso per mantenere produttività ed efficienza durante l'interazione, rispettando allo stesso tempo gli standard di qualità, gli obiettivi operativi e le esigenze del cliente?", type: "behavioral" },
+              { text: "Immagina che una cliente torni in negozio con un capo acquistato da poco e dica che si è rovinato dopo il lavaggio. Come gestisci la situazione?", type: "situational" }
+            ]
+          },
+          {
+            name: "Persuasione",
+            dec: "Influenzare gli atteggiamenti, pensieri o comportamenti altrui attraverso una comunicazione strategica, inquadramento o appelli emotivi.",
+            drivers: [
+              { name: "Avere un impatto", desc: "Trasmettere messaggi o produrre azioni che lasciano un'impressione memorabile agli altri." },
+              { name: "Strutturare la conversazione", desc: "Orientare le discussioni per sottolineare priorità, inquadrare questioni e guidare la presa di decisioni." },
+              { name: "Suscitare emozioni", desc: "Usare contenuti o prospettive emozionali per creare una connessione con l'audience e motivare cambiamenti." }
+            ],
+            questions: [
+              { text: "Descrivi una situazione in cui hai cercato di convincere un cliente esitante ad acquistare un articolo. Quale approccio hai utilizzato e quali tecniche specifiche hai adottato per influenzare la sua decisione e concludere la vendita?", type: "behavioral" },
+              { text: "Una cliente entra in negozio, osserva i capi ma non esprime un'esigenza chiara. Come ti muovi per intuire il suo stile e l'occasione d'uso e trasformare quel momento in una proposta mirata?", type: "situational" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Collaboration & Team Contribution",
+        color: "c1",
+        competenze: [
+          {
+            name: "Teamwork",
+            dec: "Collaborare in modo efficace con colleghi, stakeholders e team members, adattando il proprio comportamento e favorendo un clima positivo all'interno del team.",
+            drivers: [
+              { name: "Comunicare proattivamente", desc: "Condividere informazioni, aggiornamenti e preoccupazioni in modo tempestivo per evitare fraintendimenti." },
+              { name: "Adattarsi al team", desc: "Adeguare il proprio comportamento per aderire alle norme del gruppo e aumentarne l'efficacia." },
+              { name: "Potenziare lo spirito di squadra", desc: "Contribuire attivamente alla coesione, creazione di senso di appartenenza e impegno reciproco fra membri del team." },
+              { name: "Riconoscere i contributi", desc: "Riconoscere gli sforzi e i successi degli altri, promuovendo un clima positivo all'interno del team." },
+              { name: "Sviluppare autoconsapevolezza", desc: "Riflettere sulle proprie aree di forza, limiti e motivazioni per migliorare la propria efficacia a livello interpersonale." }
+            ],
+            questions: [
+              { text: "Immagina di partecipare a una riunione di team in cui emergono opinioni contrastanti sulla strategia di marketing per il lancio di un nuovo prodotto. Come adatteresti il tuo comportamento per favorire la collaborazione e aiutare il team ad allinearsi sulla soluzione migliore? Descrivi le azioni che intraprenderesti e il motivo.", type: "situational" },
+              { text: "Durante un turno del fine settimana particolarmente intenso, noti che il team fatica a coordinarsi e che l'esperienza cliente rischia di diventare incoerente. Come prenderesti l'iniziativa per migliorare la comunicazione e aiutare il team a garantire un servizio di alta qualità?", type: "situational" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Brand Storytelling",
+        color: "c2",
+        competenze: [
+          {
+            name: "Narrative Communication",
+            dec: "La capacità di utilizzare messaggi strutturati come storie per raggiungere un obiettivo comunicativo (informare, persuadere, motivare, intrattenere) in un pubblico specifico.",
+            drivers: [
+              { name: "Veicolare un messaggio", desc: "Trasportare gli ascoltatori nel mondo della storia trasmettendo una trama coerente, immagini vivide e una bassa richiesta cognitiva." },
+              { name: "Mappatura emotiva", desc: "Identificare e mappare le emozioni per colpire e motivare gli ascoltatori." },
+              { name: "Identificazione dell'audience", desc: "Riconoscere gli ascoltatori e adattare il linguaggio, il tono e i dettagli della storia di conseguenza." },
+              { name: "Riduzione di resistenza", desc: "Ridurre lo scetticismo degli ascoltatori usando empatia, prove chiare e un inquadramento persuasivo." },
+              { name: "Consapevolezza culturale", desc: "Adattarsi ai valori, alle norme e agli stili comunicativi di diversi gruppi culturali quando si racconta una storia." }
+            ],
+            questions: [
+              { text: "Immagina che entri una cliente fidelizzata e che tu abbia a disposizione le informazioni del programma fedeltà. Come le usi per conoscerla meglio e proporle una vendita più personalizzata?", type: "situational" },
+              { text: "Immagina che una cliente individui un capo costoso e ti chieda perché ha questo prezzo o cosa lo renda 'di valore'. Come glielo spiegheresti, utilizzando la tua conoscenza dei materiali?", type: "situational" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Agility & Execution",
+        color: "c3",
+        competenze: [
+          {
+            name: "Flessibilità cognitiva",
+            dec: "Cambiare pensieri, comportamenti e approcci interpersonali per allinearsi a nuove condizioni, idee o contesti culturali.",
+            drivers: [
+              { name: "Adattarsi alle situazioni", desc: "Modificare azioni o piani per adattarsi a circostanze nuove." },
+              { name: "Raccogliere informazioni", desc: "Ricercare in modo sistematico dati rilevanti, evidenze e prospettive per comprendere e prendere decisioni." },
+              { name: "Adattare il proprio stile interpersonale", desc: "Adattare la propria comunicazione e comportamenti a persone o circostanze diverse." },
+              { name: "Mostrare consapevolezza culturale", desc: "Riconoscere e rispettare differenze culturali e modificare il proprio comportamento di conseguenza." },
+              { name: "Gestire ambiguità", desc: "Agire in modo efficace anche quando le informazioni sono incomplete o poco chiare." }
+            ],
+            questions: [
+              { text: "Immagina di assistere un cliente nella scelta di un outfit per un importante evento familiare, ma il cliente non è sicuro dello stile o dei colori più adatti. Come lo guideresti nella scelta di un abbigliamento che rispecchi i suoi gusti personali e sia appropriato per l'occasione?", type: "situational" },
+              { text: "Stai assistendo un cliente nella scelta di un outfit per un importante incontro di lavoro. Durante la conversazione scopri che il cliente proviene da un contesto culturale diverso e ha esigenze specifiche che inizialmente non conoscevi. Come adatteresti il tuo approccio di vendita e il tuo stile di comunicazione per soddisfare le sue esigenze, concludere la vendita e dimostrare sensibilità culturale?", type: "situational" }
+            ]
+          },
+          {
+            name: "Dimostrare expertise",
+            dec: "Usare e sviluppare conoscenza in un dominio specifico, abilità fisiche o strumenti tecnologici per eseguire i task in modo efficiente.",
+            drivers: [
+              { name: "Applicare competenze tecniche", desc: "Mettere in pratica conoscenza e metodi specializzati in modo accurato per completare compiti tecnici." },
+              { name: "Acquisire competenze tecniche", desc: "Sviluppare conoscenze nel proprio dominio in modo sistematico attraverso apprendimento e pratica." },
+              { name: "Condividere competenza", desc: "Condividere conoscenze tecniche con gli altri attraverso mezzi accessibili." },
+              { name: "Usare la tecnologia", desc: "Usare gli strumenti digitali o fisici più appropriati per supportare attività di analisi, comunicazione ed esecuzione dei compiti." },
+              { name: "Dimostrare abilità manuali", desc: "Applicare il proprio know-how nell'affrontare attività manuali." }
+            ],
+            questions: [
+              { text: "Immagina che una cliente sia in camerino e stia provando un capo che le piace. Come costruisci una proposta complementare coerente per completare il look e accompagnarla naturalmente all'acquisto?", type: "situational" },
+              { text: "Descrivi una situazione in cui hai aiutato un cliente esitante a comprendere e apprezzare le caratteristiche e i benefici di un capo di abbigliamento. Quali passaggi hai seguito per rispondere alle sue preoccupazioni, dimostrare la tua competenza e guidarlo verso una scelta soddisfacente?", type: "behavioral" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  sm: {
+    macro: [
+      {
+        name: "Customer & Sales Excellence",
+        color: "c0",
+        competenze: [
+          {
+            name: "Orientamento ai risultati",
+            dec: "Assicurare che i risultati siano dello standard richiesto e siano prodotti in tempo, attraverso lavoro sistematico e controllo della qualità.",
+            drivers: [
+              { name: "Mostrare orientamento al cliente", desc: "Comprendere e prioritizzare le richieste dei clienti e rispondere ai feedback." },
+              { name: "Definire standard di qualità", desc: "Definire e comunicare criteri rigorosi nei risultati ottenuti." },
+              { name: "Lavorare in modo sistematico", desc: "Seguire procedure organizzative e flussi di lavoro logici per mantenere consistenza ed efficienza." },
+              { name: "Garantire procedure di qualità", desc: "Mantenere processi e controlli documentati che sostengano la qualità degli output." },
+              { name: "Mantenere una buona produttività", desc: "Mantenere tassi e efficienza dei risultati per raggiungere target operativi." }
+            ],
+            questions: [
+              { text: "Descrivi una situazione in cui eri responsabile della consegna di un deliverable critico per un cliente, ma hai incontrato problemi imprevisti che rischiavano di compromettere la qualità del risultato finale. Quali azioni specifiche hai intrapreso per garantire che il deliverable soddisfacesse comunque i requisiti del cliente e quali sono stati i risultati?", type: "behavioral" },
+              { text: "Immagina che una cliente torni in negozio con un capo acquistato da poco e dica che si è rovinato dopo il lavaggio. Come gestisci la situazione?", type: "situational" }
+            ]
+          },
+          {
+            name: "Persuasione",
+            dec: "Influenzare gli atteggiamenti, pensieri o comportamenti altrui attraverso una comunicazione strategica, inquadramento o appelli emotivi.",
+            drivers: [
+              { name: "Avere un impatto", desc: "Trasmettere messaggi o produrre azioni che lasciano un'impressione memorabile agli altri." },
+              { name: "Strutturare la conversazione", desc: "Orientare le discussioni per sottolineare priorità, inquadrare questioni e guidare la presa di decisioni." },
+              { name: "Suscitare emozioni", desc: "Usare contenuti o prospettive emozionali per creare una connessione con l'audience e motivare cambiamenti." }
+            ],
+            questions: [
+              { text: "Descrivi una situazione in cui hai cercato di convincere un cliente esitante ad acquistare un articolo. Quale approccio hai utilizzato e quali tecniche specifiche hai adottato per influenzare la sua decisione e concludere la vendita?", type: "behavioral" },
+              { text: "Una cliente entra in negozio, osserva i capi ma non esprime un'esigenza chiara. Come ti muovi per intuire il suo stile e l'occasione d'uso e trasformare quel momento in una proposta mirata?", type: "situational" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Leadership & People Management",
+        color: "c1",
+        competenze: [
+          {
+            name: "Leading",
+            dec: "Dirigere, coordinare e decidere, per raggiungere gli obiettivi dell'organizzazione.",
+            drivers: [
+              { name: "Coordinare l'azione", desc: "Chiarire obiettivi, priorità e tempistiche e coordinare le attività del team per raggiungere quanto prefissato." },
+              { name: "Delegare", desc: "Assegnare la responsabilità ai membri del team su task e decisioni, assumendosi la responsabilità dei risultati." },
+              { name: "Prendere decisioni", desc: "Scegliere un piano d'azione dopo aver considerato informazioni rilevanti e possibili alternative." },
+              { name: "Assumersi responsabilità", desc: "Accettare gli oneri di decisioni, risultati e conseguenze, incluso ammettere errori e imparare da essi." },
+              { name: "Mostrare consapevolezza cross-funzionale", desc: "Capire come diverse funzioni organizzative sono collegate e incorporare questa prospettiva nel proprio lavoro." }
+            ],
+            questions: [
+              { text: "Come responsabile di un negozio di abbigliamento, noti un recente calo della produttività e un aumento dei conflitti all'interno del team, incluso il supervisore recentemente promosso. Come lavoreresti con il team per migliorare il coordinamento e il processo decisionale, assicurandoti allo stesso tempo una collaborazione efficace con altri reparti chiave come gestione dell'inventario e servizio clienti?", type: "situational" },
+              { text: "Descrivi una situazione in cui hai dovuto coordinare il tuo team retail per raggiungere un importante obiettivo di vendita. Quali azioni specifiche hai intrapreso per allineare priorità e tempistiche tra le diverse funzioni del negozio, come operazioni, marketing e servizio clienti? Come hai fatto a mettere il team sulla stessa lunghezza d'onda e quali risultati hai ottenuto?", type: "behavioral" }
+            ]
+          },
+          {
+            name: "Mentoring",
+            dec: "Supervisionare, supportare e motivare gli altri per raggiungere gli obiettivi dell'organizzazione.",
+            drivers: [
+              { name: "Supervisionare", desc: "Osservare la performance, assicurando che gli standard siano rispettati." },
+              { name: "Coaching", desc: "Guidare i membri del team a sviluppare competenze, riflettere sulla propria performance e imparare per migliorare capacità e performance." },
+              { name: "Responsabilizzare il team", desc: "Creare le condizioni affinché i membri del team abbiano autonomia, risorse e sicurezza per prendere decisioni e agire." },
+              { name: "Motivare il team", desc: "Stimolare e sostenere gli sforzi dei membri del team verso il raggiungimento di obiettivi." },
+              { name: "Far crescere il team", desc: "Agevolare la crescita dei collaboratori attraverso training, progetti assegnati, feedback e supporti di carriera affinché acquisiscano abilità utili per il ruolo attuale e posizioni future." },
+              { name: "Individuare il talento", desc: "Riconoscere capability needs attuali e futuri, individuando candidati con potenziale e selezionando persone con competenze e profilo in linea con le richieste dell'organizzazione." }
+            ],
+            questions: [
+              { text: "Sei uno store manager e hai recentemente promosso il tuo miglior addetto alle vendite al ruolo di assistente manager. Tuttavia, noti che fatica a fare da mentore e a sviluppare il resto del team. La produttività e il morale sono diminuiti e il team non sta raggiungendo gli obiettivi di vendita principali. Come faresti per osservare il suo approccio di mentoring, fornirgli feedback e supportarlo nel coaching del team per migliorare le competenze e aumentare le performance complessive?", type: "situational" },
+              { text: "Descrivi una situazione in cui hai dovuto fornire coaching e supporto a un nuovo dipendente che faticava a soddisfare le aspettative di performance nel tuo negozio di abbigliamento. Quali passi specifici hai intrapreso per aiutarlo a migliorare e quali risultati hai ottenuto?", type: "behavioral" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Store Operations",
+        color: "c3",
+        competenze: [
+          {
+            name: "Organizzare e pianificare",
+            dec: "Stabilire obiettivi, sviluppare programmi, definire la priorità dei task e organizzare le risorse per raggiungere risultati in modo efficiente.",
+            drivers: [
+              { name: "Definire obiettivi", desc: "Definire obiettivi chiari, misurabili e vincolati alle tempistiche, per guidare l'azione." },
+              { name: "Sviluppare piani d'azione", desc: "Sviluppare piani divisi in più step e tempistiche per raggiungere gli obiettivi." },
+              { name: "Gestire progetti", desc: "Coordinare task, rimuovere ostacoli e assicurare il completamento dei progetti." },
+              { name: "Gestire il tempo", desc: "Allocare e programmare il proprio tempo in modo efficace per gestire scadenze e priorità." },
+              { name: "Gestire risorse", desc: "Assegnare e ottimizzare l'uso di persone, budget, strumenti e informazioni in supporto dei piani." },
+              { name: "Monitorare i progressi", desc: "Tenere traccia di milestones e indicatori di performance e mettere in atto azioni correttive in caso di deviazioni dai piani." }
+            ],
+            questions: [
+              { text: "Descrivi una situazione in cui hai dovuto gestire più priorità e risorse limitate per portare a termine un progetto importante per il tuo negozio. Quali sfide hai incontrato e come hai adattato il tuo approccio per garantire il successo del progetto?", type: "behavioral" },
+              { text: "Come responsabile di un negozio di abbigliamento, il tuo team fatica a gestire l'elevata domanda stagionale a causa di scorte limitate e ritardi nelle spedizioni. Come utilizzeresti le tue capacità di pianificazione e organizzazione per definire obiettivi di performance chiari, monitorare i progressi e adottare azioni correttive per rimettere il negozio sulla giusta strada e soddisfare le esigenze dei clienti?", type: "situational" }
+            ]
+          },
+          {
+            name: "Business acumen",
+            dec: "Identificare e sfruttare opportunità commerciali, mantenendo una consapevolezza di mercato, e usare leve economiche e organizzative per creare valore.",
+            drivers: [
+              { name: "Monitorare il mercato", desc: "Mantenersi al corrente di trend di mercato, azioni dei competitor e bisogni dei clienti per anticipare i cambiamenti." },
+              { name: "Identificare le opportunità", desc: "Individuare gap o nuove combinazioni di risorse che possono essere trasformati in iniziative imprenditoriali praticabili." },
+              { name: "Anticipare i trend", desc: "Mostrare acume nel business per prevedere trend di mercato e perseguire opportunità commerciali con accuratezza." },
+              { name: "Tenere sotto controllo i costi", desc: "Gestire le spese in modo prudente per proteggere il margine e allocare le risorse in modo efficiente." },
+              { name: "Avere consapevolezza organizzativa", desc: "Mostrare consapevolezza verso limiti interni, priorità degli stakeholders e fattori strutturali che impattano sul successo di un'iniziativa imprenditoriale." }
+            ],
+            questions: [
+              { text: "Il tuo negozio ha registrato un calo delle scorte e del traffico dei clienti per diversi trimestri. Il responsabile regionale ti ha dato un mese per presentare un piano di rilancio. Considerando le tendenze di mercato e i vincoli operativi interni, quali opportunità di prodotto o servizio individueresti per recuperare redditività? Come ti assicureresti che il piano sia allineato con le priorità del responsabile regionale?", type: "situational" },
+              { text: "Descrivi una situazione in cui hai dovuto prendere una decisione critica sulla gestione dell'inventario che andava contro le preferenze di un cliente a causa di vincoli finanziari. Quali azioni hai intrapreso per gestire la situazione e quali risultati hai ottenuto?", type: "behavioral" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Problem Solving & Agility",
+        color: "c4",
+        competenze: [
+          {
+            name: "Strategia e visione",
+            dec: "Sviluppare piani di alto livello e strutture concettuali che comprendano risorse, capacità e analisi del contesto per raggiungere obiettivi a lungo termine.",
+            drivers: [
+              { name: "Anticipare gli sviluppi", desc: "Nel formulare piani, considerare un contesto più ampio, conseguenze a lungo termine e le prospettive di più stakeholder." },
+              { name: "Bilanciare le strategie", desc: "Prioritizzare le attività basandosi sul loro impatto, in maniera ragionata e sostenibile." },
+              { name: "Determinare la vision", desc: "Creare una visione di futuro a lungo termine per ispirare impegno." },
+              { name: "Validare strategie", desc: "Ideare, implementare e riprodurre strategie fondate su analisi e capacità dell'organizzazione, per validarne l'impatto." }
+            ],
+            questions: [
+              { text: "Descrivi una recente situazione operativa in cui hai dovuto bilanciare le esigenze e le priorità del tuo negozio, dei clienti e del team. Quali fattori hai considerato nello sviluppare il tuo approccio e come hai valutato l'impatto della tua decisione?", type: "behavioral" },
+              { text: "Descrivi una situazione in cui hai dovuto prendere una decisione strategica che richiedeva di bilanciare priorità a breve e a lungo termine per il tuo team o il tuo negozio. Quali fattori hai considerato nel processo decisionale e quali risultati ha prodotto il tuo approccio?", type: "behavioral" }
+            ]
+          },
+          {
+            name: "Dimostrare expertise",
+            dec: "Usare e sviluppare conoscenza in un dominio specifico, abilità fisiche o strumenti tecnologici per eseguire i task in modo efficiente.",
+            drivers: [
+              { name: "Applicare competenze tecniche", desc: "Mettere in pratica conoscenza e metodi specializzati in modo accurato per completare compiti tecnici." },
+              { name: "Acquisire competenze tecniche", desc: "Sviluppare conoscenze nel proprio dominio in modo sistematico attraverso apprendimento e pratica." },
+              { name: "Condividere competenza", desc: "Condividere conoscenze tecniche con gli altri attraverso mezzi accessibili." },
+              { name: "Usare la tecnologia", desc: "Usare gli strumenti digitali o fisici più appropriati per supportare attività di analisi, comunicazione ed esecuzione dei compiti." },
+              { name: "Dimostrare abilità manuali", desc: "Applicare il proprio know-how nell'affrontare attività manuali." }
+            ],
+            questions: [
+              { text: "Immagina che una cliente sia in camerino e stia provando un capo che le piace. Come costruisci una proposta complementare coerente per completare il look e accompagnarla naturalmente all'acquisto?", type: "situational" },
+              { text: "Descrivi una situazione in cui hai aiutato un cliente esitante a comprendere e apprezzare le caratteristiche e i benefici di un capo di abbigliamento. Quali passaggi hai seguito per rispondere alle sue preoccupazioni, dimostrare la tua competenza e guidarlo verso una scelta soddisfacente?", type: "behavioral" }
+            ]
+          }
+        ]
+      },
+      {
+        name: "Brand Storytelling",
+        color: "c2",
+        competenze: [
+          {
+            name: "Narrative Communication",
+            dec: "La capacità di utilizzare messaggi strutturati come storie per raggiungere un obiettivo comunicativo (informare, persuadere, motivare, intrattenere) in un pubblico specifico.",
+            drivers: [
+              { name: "Veicolare un messaggio", desc: "Trasportare gli ascoltatori nel mondo della storia trasmettendo una trama coerente, immagini vivide e una bassa richiesta cognitiva." },
+              { name: "Mappatura emotiva", desc: "Identificare e mappare le emozioni per colpire e motivare gli ascoltatori." },
+              { name: "Identificazione dell'audience", desc: "Riconoscere gli ascoltatori e adattare il linguaggio, il tono e i dettagli della storia di conseguenza." },
+              { name: "Riduzione di resistenza", desc: "Ridurre lo scetticismo degli ascoltatori usando empatia, prove chiare e un inquadramento persuasivo." },
+              { name: "Consapevolezza culturale", desc: "Adattarsi ai valori, alle norme e agli stili comunicativi di diversi gruppi culturali quando si racconta una storia." }
+            ],
+            questions: [
+              { text: "Immagina che una cliente individui un capo costoso e ti chieda perché ha questo prezzo o cosa lo renda 'di valore'. Come glielo spiegheresti, utilizzando la tua conoscenza dei materiali?", type: "situational" },
+              { text: "Immagina che entri una cliente fidelizzata e che tu abbia a disposizione le informazioni del programma fedeltà. Come le usi per conoscerla meglio e proporle una vendita più personalizzata?", type: "situational" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+};
+
+// ────────────────────────────────────────────────────────────
+// STATE
+// ────────────────────────────────────────────────────────────
+let currentRole = 'sa';
+let currentView = 'overview';
+let currentMacroIdx = null;
+let currentCompIdx = null;
+let openMacros = {};
+
+// ────────────────────────────────────────────────────────────
+// UTILITIES
+// ────────────────────────────────────────────────────────────
+function getRoleData() { return DATA[currentRole]; }
+
+function countStats(role) {
+  const d = DATA[role];
+  let comps = 0, drivers = 0, questions = 0;
+  let macros = d.macro.length;
+  d.macro.forEach(m => {
+    comps += m.competenze.length;
+    m.competenze.forEach(c => {
+      drivers += c.drivers.length;
+      questions += c.questions.length;
+    });
+  });
+  return { macros, comps, drivers, questions };
+}
+
+// ────────────────────────────────────────────────────────────
+// RENDER SIDEBAR
+// ────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const d = getRoleData();
+  let html = `<div class="sidebar-section-label">Aree di Competenza</div>`;
+
+  html += `<div class="macro-group">
+    <button class="macro-btn ${currentView === 'overview' ? 'active' : ''}" onclick="showOverview()">
+      <span class="macro-dot-label">
+        <span style="font-size:13px">⬡</span> Panoramica
+      </span>
+    </button>
+  </div>`;
+
+  d.macro.forEach((m, mi) => {
+    const isOpen = !!openMacros[currentRole + mi];
+    html += `<div class="macro-group">
+      <button class="macro-btn ${isOpen ? 'open' : ''}" onclick="toggleMacro(${mi})">
+        <span class="macro-dot-label">
+          <span class="macro-dot ${m.color}"></span>
+          ${m.name}
+        </span>
+        <span class="macro-chevron">▶</span>
+      </button>
+      <div class="comp-list ${isOpen ? 'open' : ''}">`;
+    m.competenze.forEach((c, ci) => {
+      const isActive = currentView === 'detail' && currentMacroIdx === mi && currentCompIdx === ci;
+      html += `<button class="comp-btn ${isActive ? 'active' : ''}" onclick="showDetail(${mi},${ci})">${c.name}</button>`;
+    });
+    html += `</div></div>`;
+  });
+
+  document.getElementById('sidebar').innerHTML = html;
+}
+
+// ────────────────────────────────────────────────────────────
+// RENDER MAIN OVERVIEW
+// ────────────────────────────────────────────────────────────
+function renderOverview() {
+  const d = getRoleData();
+  const role = currentRole === 'sa' ? 'Sales Advisor' : 'Store Manager';
+  const s = countStats(currentRole);
+
+  let html = `
+  <div class="overview-header">
+    <div class="overview-title">${role}</div>
+    <div class="overview-sub">Framework Competenze Skillvue</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">${s.macros}</div><div class="stat-label">Aree Macro</div></div>
+    <div class="stat-card"><div class="stat-num">${s.comps}</div><div class="stat-label">Competenze</div></div>
+    <div class="stat-card"><div class="stat-num">${s.drivers}</div><div class="stat-label">Driver Comportamentali</div></div>
+    <div class="stat-card"><div class="stat-num">${s.questions}</div><div class="stat-label">Domande Assessment</div></div>
+  </div>
+  <div class="section-title">Aree di Competenza</div>
+  <div class="macro-cards">`;
+
+  d.macro.forEach((m, mi) => {
+    const compNames = m.competenze.map(c => c.name);
+    html += `<div class="macro-card ${m.color}" onclick="expandMacro(${mi})">
+      <div class="macro-card-title">${m.name}</div>
+      <div class="macro-card-meta">${m.competenze.length} competenz${m.competenze.length === 1 ? 'a' : 'e'} · ${m.competenze.reduce((a,c) => a + c.drivers.length, 0)} driver</div>
+      <div class="macro-card-chips">${compNames.map(n => `<span class="chip">${n}</span>`).join('')}</div>
+    </div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('main').innerHTML = html;
+}
+
+// ────────────────────────────────────────────────────────────
+// RENDER DETAIL
+// ────────────────────────────────────────────────────────────
+function renderDetail(mi, ci) {
+  const d = getRoleData();
+  const macro = d.macro[mi];
+  const comp = macro.competenze[ci];
+
+  let html = `
+  <div class="detail-header">
+    <div class="breadcrumb">${macro.name} <span>›</span> ${comp.name}</div>
+    <div class="detail-title">${comp.name}</div>
+    <div class="detail-declaratoria">${comp.dec}</div>
+  </div>
+
+  <div class="section-title">Driver Comportamentali</div>
+  <div class="driver-grid">`;
+
+  comp.drivers.forEach(dr => {
+    html += `<div class="driver-row">
+      <div class="driver-name">${dr.name}</div>
+      <div class="driver-desc">${dr.desc}</div>
+    </div>`;
+  });
+
+  html += `</div>
+  <div class="section-title" style="margin-top:32px">Domande di Assessment</div>
+  <div class="question-cards">`;
+
+  comp.questions.forEach((q, qi) => {
+    const typeLabel = q.type === 'behavioral' ? 'Comportamentale' : 'Situazionale';
+    html += `<div class="question-card">
+      <div class="q-num">${qi + 1}</div>
+      <div class="q-type ${q.type}">${typeLabel}</div>
+      <div class="q-text">${q.text}</div>
+    </div>`;
+  });
+
+  html += `</div>`;
+
+  // Navigation
+  const allComps = [];
+  d.macro.forEach((m, mIdx) => m.competenze.forEach((c, cIdx) => allComps.push([mIdx, cIdx])));
+  const curIdx = allComps.findIndex(([m, c]) => m === mi && c === ci);
+  const prev = allComps[curIdx - 1];
+  const next = allComps[curIdx + 1];
+
+  html += `<div style="display:flex;gap:12px;margin-top:36px;justify-content:flex-end">`;
+  if (prev) {
+    const pm = d.macro[prev[0]].competenze[prev[1]].name;
+    html += `<button onclick="showDetail(${prev[0]},${prev[1]})" style="padding:9px 18px;border:1px solid var(--divider);border-radius:7px;cursor:pointer;background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--slate)">← ${pm}</button>`;
+  }
+  if (next) {
+    const nm = d.macro[next[0]].competenze[next[1]].name;
+    html += `<button onclick="showDetail(${next[0]},${next[1]})" style="padding:9px 18px;border:1px solid var(--divider);border-radius:7px;cursor:pointer;background:var(--gold);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink)">${nm} →</button>`;
+  }
+  html += `</div>`;
+
+  document.getElementById('main').innerHTML = html;
+}
+
+// ────────────────────────────────────────────────────────────
+// NAVIGATION
+// ────────────────────────────────────────────────────────────
+function showOverview() {
+  currentView = 'overview';
+  currentMacroIdx = null;
+  currentCompIdx = null;
+  renderOverview();
+  renderSidebar();
+}
+
+function showDetail(mi, ci) {
+  currentView = 'detail';
+  currentMacroIdx = mi;
+  currentCompIdx = ci;
+  openMacros[currentRole + mi] = true;
+  renderDetail(mi, ci);
+  renderSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleMacro(mi) {
+  const key = currentRole + mi;
+  openMacros[key] = !openMacros[key];
+  renderSidebar();
+}
+
+function expandMacro(mi) {
+  openMacros[currentRole + mi] = true;
+  showDetail(mi, 0);
+}
+
+function switchRole(role) {
+  currentRole = role;
+  currentView = 'overview';
+  currentMacroIdx = null;
+  currentCompIdx = null;
+  document.querySelectorAll('.role-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && role === 'sa') || (i === 1 && role === 'sm'));
+  });
+  renderSidebar();
+  renderOverview();
+}
+
+// ────────────────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────────────────
+renderSidebar();
+renderOverview();
+</script>
+</body>
+</html>
