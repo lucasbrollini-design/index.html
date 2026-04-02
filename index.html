@@ -3,458 +3,601 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Assessment Competenze — Dashboard</title>
+<title>Assessment Competenze — Skillvue</title>
 <style>
-  @font-face {
-    font-family: 'Mona Sans';
-    src: url('https://github.githubassets.com/assets/mona-sans.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-  }
-</style>
-<style>
-  :root {
-    --ink: #0f0e0d;
-    --cream: #f7f4ef;
-    --warm: #ede8df;
-    --gold: #c9a84c;
-    --gold-light: #e8d5a3;
-    --rust: #b85c38;
-    --sage: #4a7c59;
-    --slate: #4a5568;
-    --divider: #d9d3c7;
-    --white: #ffffff;
-    --pill-bg: #f0ebe2;
-  }
+@font-face {
+  font-family: 'Mona Sans';
+  src: url('https://github.githubassets.com/assets/mona-sans.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+a { text-decoration: none; }
 
-  body {
-    font-family: 'Mona Sans', sans-serif;
-    background: var(--cream);
-    color: var(--ink);
-    min-height: 100vh;
-    font-size: 14px;
-  }
+/* ── TOKENS (Skillvue DS) ── */
+:root {
+  /* Brand */
+  --primary:        #4F46E5;
+  --primary-hover:  #4338CA;
+  --primary-light:  #EEF2FF;
+  --primary-text:   #3730A3;
 
-  /* ── HEADER ── */
-  header {
-    background: var(--ink);
-    color: var(--cream);
-    padding: 24px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 2px solid var(--gold);
-  }
+  /* Neutrals */
+  --n900: #111827;
+  --n700: #374151;
+  --n500: #6B7280;
+  --n400: #9CA3AF;
+  --n300: #D1D5DB;
+  --n200: #E5E7EB;
+  --n100: #F3F4F6;
+  --n50:  #F9FAFB;
+  --n0:   #FFFFFF;
 
-  .brand { display: flex; flex-direction: column; gap: 2px; }
-  .brand-title {
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: var(--gold);
-  }
-  .brand-sub {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #9a9489;
-    font-weight: 400;
-  }
+  /* Semantic */
+  --info-bg:    #EFF6FF; --info-border:   #BFDBFE; --info-text:    #1D4ED8;
+  --success-bg: #F0FDF4; --success-border:#BBF7D0; --success-text: #15803D;
+  --warning-bg: #FFFBEB; --warning-border:#FDE68A; --warning-text: #B45309;
+  --danger-bg:  #FEF2F2; --danger-border: #FECACA; --danger-text:  #B91C1C;
 
-  .role-tabs {
-    display: flex;
-    gap: 4px;
-    background: rgba(255,255,255,0.07);
-    padding: 4px;
-    border-radius: 8px;
-  }
-  .role-tab {
-    padding: 8px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    border: none;
-    transition: all 0.2s;
-    background: transparent;
-    color: #9a9489;
-    letter-spacing: 0.02em;
-  }
-  .role-tab.active {
-    background: var(--gold);
-    color: var(--ink);
-  }
-  .role-tab:hover:not(.active) {
-    background: rgba(255,255,255,0.1);
-    color: var(--cream);
-  }
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.10);
 
-  /* ── LAYOUT ── */
-  .container {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    min-height: calc(100vh - 73px);
-  }
+  /* Radius */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-full: 9999px;
 
-  /* ── SIDEBAR ── */
-  sidebar {
-    background: var(--warm);
-    border-right: 1px solid var(--divider);
-    padding: 28px 0;
-    position: sticky;
-    top: 73px;
-    height: calc(100vh - 73px);
-    overflow-y: auto;
-  }
+  /* Sidebar */
+  --sidebar-w: 239px;
+  --topbar-h: 56px;
 
-  .sidebar-section-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #9a8f80;
-    padding: 0 20px 10px;
-    margin-top: 8px;
-  }
+  /* Macro area colors */
+  --mc0: #4F46E5;
+  --mc1: #0369A1;
+  --mc2: #7C3AED;
+  --mc3: #B45309;
+  --mc4: #047857;
+}
 
-  .macro-group {
-    margin-bottom: 4px;
-  }
+/* ── BASE ── */
+html { font-size: 14px; }
+body {
+  font-family: 'Mona Sans', system-ui, sans-serif;
+  background: var(--n50);
+  color: var(--n700);
+  line-height: 1.5;
+  min-height: 100vh;
+}
 
-  .macro-btn {
-    width: 100%;
-    text-align: left;
-    padding: 10px 20px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--ink);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: background 0.15s;
-    letter-spacing: 0.01em;
-  }
-  .macro-btn:hover { background: rgba(0,0,0,0.04); }
-  .macro-btn.active { background: rgba(201,168,76,0.15); color: #7a5c1a; }
+/* ── TOPBAR ── */
+.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: var(--n0);
+  border-bottom: 1px solid var(--n200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 200;
+  box-shadow: var(--shadow-sm);
+}
 
-  .macro-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+.topbar-left { display: flex; align-items: center; gap: 16px; }
 
-  .macro-dot-label { display: flex; align-items: center; gap: 9px; }
+.logo-svg { display: block; height: 22px; width: auto; }
 
-  .macro-chevron {
-    font-size: 10px;
-    color: #9a8f80;
-    transition: transform 0.2s;
-  }
-  .macro-btn.open .macro-chevron { transform: rotate(90deg); }
+.topbar-divider {
+  width: 1px; height: 20px;
+  background: var(--n200);
+}
 
-  .comp-list {
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.25s ease;
-  }
-  .comp-list.open { max-height: 600px; }
+.topbar-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--n900);
+  letter-spacing: -0.01em;
+}
 
-  .comp-btn {
-    width: 100%;
-    text-align: left;
-    padding: 8px 20px 8px 37px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 12.5px;
-    color: var(--slate);
-    transition: all 0.15s;
-    position: relative;
-  }
-  .comp-btn::before {
-    content: '';
-    position: absolute;
-    left: 26px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--divider);
-    transition: background 0.15s;
-  }
-  .comp-btn:hover { background: rgba(0,0,0,0.03); color: var(--ink); }
-  .comp-btn:hover::before { background: var(--gold); }
-  .comp-btn.active {
-    color: var(--ink);
-    font-weight: 600;
-    background: rgba(201,168,76,0.12);
-  }
-  .comp-btn.active::before { background: var(--gold); }
+/* Role switcher as Tab component */
+.role-tabs {
+  display: flex;
+  border-bottom: none;
+  gap: 2px;
+  background: var(--n100);
+  padding: 3px;
+  border-radius: var(--r-md);
+}
+.role-tab {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--n500);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.role-tab:hover { color: var(--n700); }
+.role-tab.active {
+  background: var(--n0);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+}
 
-  /* ── MAIN ── */
-  main {
-    padding: 32px 40px;
-    overflow-y: auto;
-  }
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: var(--topbar-h);
+  bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--n0);
+  border-right: 1px solid var(--n200);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 0 24px;
+  z-index: 100;
+}
 
-  .view { display: none; }
-  .view.active { display: block; }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--n200); border-radius: 4px; }
 
-  /* ── OVERVIEW CARDS ── */
-  .overview-header {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .overview-title {
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 28px;
-    font-weight: 750;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-  .overview-sub {
-    font-size: 12px;
-    color: #9a8f80;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--n400);
+  padding: 0 16px 8px;
+  margin-top: 8px;
+}
 
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 32px;
-  }
+/* Overview nav item */
+.nav-overview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--n700);
+  width: 100%;
+  text-align: left;
+  transition: background 0.1s;
+  border-left: 2px solid transparent;
+}
+.nav-overview:hover { background: var(--n50); }
+.nav-overview.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-left-color: var(--primary);
+}
+.nav-overview svg { color: var(--n400); flex-shrink: 0; }
+.nav-overview.active svg { color: var(--primary); }
 
-  .stat-card {
-    background: var(--white);
-    border: 1px solid var(--divider);
-    border-radius: 10px;
-    padding: 18px 20px;
-  }
-  .stat-num {
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: var(--gold);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .stat-label { font-size: 12px; color: #9a8f80; text-transform: uppercase; letter-spacing: 0.08em; }
+/* Macro group */
+.macro-group { margin-bottom: 2px; }
 
-  /* ── MACRO AREA CARDS ── */
-  .macro-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
-  .macro-card {
-    background: var(--white);
-    border: 1px solid var(--divider);
-    border-radius: 10px;
-    padding: 20px 22px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .macro-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    border-radius: 10px 0 0 10px;
-  }
-  .macro-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); transform: translateY(-1px); }
-  .macro-card-title {
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 16px;
-    margin-bottom: 6px;
-    padding-left: 10px;
-  }
-  .macro-card-meta { font-size: 12px; color: #9a8f80; padding-left: 10px; }
-  .macro-card-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding-left: 10px; }
-  .chip {
-    background: var(--pill-bg);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 11px;
-    color: #6b5e4a;
-    font-weight: 500;
-  }
+.macro-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--n700);
+  width: 100%;
+  text-align: left;
+  transition: background 0.1s;
+}
+.macro-btn:hover { background: var(--n50); }
+.macro-btn-left { display: flex; align-items: center; gap: 8px; }
+.macro-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.macro-chevron {
+  transition: transform 0.2s;
+  color: var(--n400);
+  flex-shrink: 0;
+}
+.macro-btn.open .macro-chevron { transform: rotate(90deg); }
 
-  /* ── COMPETENZA DETAIL VIEW ── */
-  .detail-header {
-    margin-bottom: 28px;
-  }
-  .breadcrumb { font-size: 12px; color: #9a8f80; margin-bottom: 8px; letter-spacing: 0.03em; }
-  .breadcrumb span { color: var(--gold); }
-  .detail-title {
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 30px;
-    font-weight: 750;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
-    margin-bottom: 10px;
-  }
-  .detail-declaratoria {
-    background: var(--warm);
-    border-left: 3px solid var(--gold);
-    padding: 14px 18px;
-    border-radius: 0 8px 8px 0;
-    font-size: 13.5px;
-    line-height: 1.65;
-    color: var(--slate);
-    max-width: 760px;
-  }
+/* Competenza items */
+.comp-list { overflow: hidden; max-height: 0; transition: max-height 0.25s ease; }
+.comp-list.open { max-height: 999px; }
 
-  .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #9a8f80;
-    margin: 28px 0 14px;
-  }
+.comp-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  height: 36px;
+  padding: 0 16px 0 34px;
+  font-size: 13px;
+  color: var(--n500);
+  transition: all 0.1s;
+  border-left: 2px solid transparent;
+  position: relative;
+}
+.comp-btn:hover { background: var(--n50); color: var(--n700); }
+.comp-btn.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
 
-  /* ── DRIVER TABLE ── */
-  .driver-grid { display: flex; flex-direction: column; gap: 10px; max-width: 800px; }
-  .driver-row {
-    background: var(--white);
-    border: 1px solid var(--divider);
-    border-radius: 8px;
-    padding: 14px 18px;
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-  .driver-name {
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--ink);
-    line-height: 1.4;
-  }
-  .driver-desc {
-    font-size: 13px;
-    color: var(--slate);
-    line-height: 1.55;
-  }
+/* ── MAIN CONTENT ── */
+.main {
+  margin-left: var(--sidebar-w);
+  margin-top: var(--topbar-h);
+  padding: 24px;
+  min-height: calc(100vh - var(--topbar-h));
+}
 
-  /* ── QUESTIONS ── */
-  .question-cards { display: flex; flex-direction: column; gap: 12px; max-width: 800px; }
-  .question-card {
-    background: var(--white);
-    border: 1px solid var(--divider);
-    border-radius: 10px;
-    padding: 18px 20px;
-    position: relative;
-  }
-  .q-num {
-    position: absolute;
-    top: 14px; right: 16px;
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 32px;
-    color: #f0ebe2;
-    font-style: italic;
-    line-height: 1;
-    pointer-events: none;
-  }
-  .q-type {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 3px;
-    margin-bottom: 10px;
-  }
-  .q-type.behavioral { background: rgba(74,124,89,0.12); color: var(--sage); }
-  .q-type.situational { background: rgba(184,92,56,0.12); color: var(--rust); }
-  .q-text { font-size: 13.5px; line-height: 1.65; color: var(--ink); padding-right: 40px; }
+.content-inner { max-width: 1024px; }
 
-  /* ── SEARCH ── */
-  .search-bar-wrap { margin-bottom: 28px; }
-  .search-bar {
-    width: 100%;
-    max-width: 480px;
-    padding: 10px 16px 10px 38px;
-    border: 1px solid var(--divider);
-    border-radius: 8px;
-    font-family: 'Mona Sans', sans-serif;
-    font-size: 13.5px;
-    background: var(--white);
-    color: var(--ink);
-    outline: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%239a8f80' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 12px center;
-    transition: border-color 0.2s;
-  }
-  .search-bar:focus { border-color: var(--gold); }
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 24px; }
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--n900);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.page-sub {
+  font-size: 14px;
+  color: var(--n500);
+}
 
-  .no-results { color: #9a8f80; font-style: italic; font-size: 13px; padding: 20px 0; }
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--n0);
+  border: 1px solid var(--n200);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-num {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--n500);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
-  /* macro colors */
-  .c0::before, .c0 { --mc: #4a7c59; }
-  .c1::before, .c1 { --mc: #4a6a9c; }
-  .c2::before, .c2 { --mc: #8c5a7e; }
-  .c3::before, .c3 { --mc: #b85c38; }
-  .c4::before, .c4 { --mc: #c9a84c; }
-  .c5::before, .c5 { --mc: #4a7c7c; }
+/* ── SECTION TITLE ── */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--n400);
+  margin-bottom: 12px;
+}
 
-  .macro-dot.c0 { background: #4a7c59; }
-  .macro-dot.c1 { background: #4a6a9c; }
-  .macro-dot.c2 { background: #8c5a7e; }
-  .macro-dot.c3 { background: #b85c38; }
-  .macro-dot.c4 { background: #c9a84c; }
-  .macro-dot.c5 { background: #4a7c7c; }
+/* ── MACRO CARDS GRID ── */
+.macro-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.macro-card {
+  background: var(--n0);
+  border: 1px solid var(--n200);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.macro-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.macro-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.macro-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-left: 12px;
+}
+.macro-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--n900);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.macro-card-meta {
+  font-size: 12px;
+  color: var(--n500);
+  padding-left: 12px;
+  margin-bottom: 12px;
+}
+.macro-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-left: 12px;
+}
 
-  .macro-card.c0::before { background: #4a7c59; }
-  .macro-card.c1::before { background: #4a6a9c; }
-  .macro-card.c2::before { background: #8c5a7e; }
-  .macro-card.c3::before { background: #b85c38; }
-  .macro-card.c4::before { background: #c9a84c; }
-  .macro-card.c5::before { background: #4a7c7c; }
+/* ── TAG / BADGE ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--r-full);
+  font-size: 12px;
+  font-weight: 500;
+}
+.tag-neutral  { background: var(--n100); color: var(--n700); }
+.tag-accent   { background: var(--primary-light); color: var(--primary-text); }
+.tag-success  { background: var(--success-bg); color: var(--success-text); }
+.tag-warning  { background: var(--warning-bg); color: var(--warning-text); }
+.tag-danger   { background: var(--danger-bg); color: var(--danger-text); }
+.tag-info     { background: var(--info-bg); color: var(--info-text); }
+.tag-outline  { background: transparent; border: 1px solid var(--n300); color: var(--n700); }
 
-  .q-role-badge {
-    display: inline-block;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 2px 8px;
-    border-radius: 3px;
-    margin-left: 6px;
-    background: #f0ebe2;
-    color: #7a6a54;
-  }
+/* ── DETAIL VIEW ── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--n500);
+  margin-bottom: 8px;
+}
+.breadcrumb-sep { color: var(--n300); }
+.breadcrumb-active { color: var(--primary); font-weight: 500; }
 
-  @media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; }
-    sidebar { position: static; height: auto; }
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .macro-cards { grid-template-columns: 1fr; }
-  }
+.detail-title {
+  font-size: 24px;
+  font-weight: 750;
+  color: var(--n900);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.declaratoria {
+  background: var(--primary-light);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--primary-text);
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+/* ── DRIVER TABLE ── */
+.driver-table {
+  background: var(--n0);
+  border: 1px solid var(--n200);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 32px;
+  max-width: 720px;
+  box-shadow: var(--shadow-sm);
+}
+.driver-table-head {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  background: var(--n100);
+  height: 40px;
+  padding: 0 16px;
+  align-items: center;
+  border-bottom: 1px solid var(--n200);
+}
+.driver-table-head span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--n700);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.driver-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--n200);
+  align-items: start;
+  gap: 16px;
+  transition: background 0.1s;
+}
+.driver-row:last-child { border-bottom: none; }
+.driver-row:hover { background: var(--n50); }
+.driver-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--n900);
+  line-height: 1.4;
+}
+.driver-desc {
+  font-size: 13px;
+  color: var(--n700);
+  line-height: 1.55;
+}
+
+/* ── QUESTION CARDS ── */
+.question-list { display: flex; flex-direction: column; gap: 12px; max-width: 720px; }
+
+.question-card {
+  background: var(--n0);
+  border: 1px solid var(--n200);
+  border-radius: var(--r-lg);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.question-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.q-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: var(--r-full);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.q-text {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--n700);
+}
+
+/* ── NAVIGATION BUTTONS ── */
+.detail-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--n200);
+  max-width: 720px;
+}
+
+/* Buttons (DS spec) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: all 0.15s;
+  cursor: pointer;
+  border: none;
+}
+.btn-solid-primary { background: var(--primary); color: white; }
+.btn-solid-primary:hover { background: var(--primary-hover); }
+.btn-outline-primary {
+  background: var(--n0);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+}
+.btn-outline-primary:hover { background: var(--primary-light); }
+.btn-ghost-primary { background: transparent; color: var(--primary); }
+.btn-ghost-primary:hover { background: var(--primary-light); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+}
+.empty-icon {
+  width: 48px; height: 48px;
+  background: var(--n100);
+  border-radius: var(--r-lg);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  color: var(--n400);
+}
+.empty-title { font-size: 16px; font-weight: 600; color: var(--n900); margin-bottom: 4px; }
+.empty-body { font-size: 14px; color: var(--n500); }
+
+/* ── MACRO COLOR ASSIGNMENTS ── */
+.mc0 { --mc: var(--mc0); }
+.mc1 { --mc: var(--mc1); }
+.mc2 { --mc: var(--mc2); }
+.mc3 { --mc: var(--mc3); }
+.mc4 { --mc: var(--mc4); }
+
+.macro-card.mc0::before { background: var(--mc0); }
+.macro-card.mc1::before { background: var(--mc1); }
+.macro-card.mc2::before { background: var(--mc2); }
+.macro-card.mc3::before { background: var(--mc3); }
+.macro-card.mc4::before { background: var(--mc4); }
+
+.macro-dot.mc0 { background: var(--mc0); }
+.macro-dot.mc1 { background: var(--mc1); }
+.macro-dot.mc2 { background: var(--mc2); }
+.macro-dot.mc3 { background: var(--mc3); }
+.macro-dot.mc4 { background: var(--mc4); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .macro-cards { grid-template-columns: 1fr; }
+  .driver-table-head, .driver-row { grid-template-columns: 1fr; }
+  .driver-table-head span:last-child { display: none; }
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <div class="brand-title">Assessment Competenze</div>
-    <div class="brand-sub">Skillvue · Framework di Valutazione</div>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <svg class="logo-svg" viewBox="0 0 159 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M155.533 10.0007C155.533 10.1723 155.533 10.3438 155.519 10.5154V10.5425C155.491 11.1565 155.399 11.7615 155.25 12.344C155.045 13.1747 154.734 13.9648 154.325 14.7008C154.158 15.0078 153.698 14.9762 153.553 14.6556V14.6466C153.512 14.5473 153.465 14.4434 153.414 14.3396C153.379 14.269 153.342 14.201 153.304 14.1317L153.265 14.0597C153.265 14.0544 153.262 14.0506 153.259 14.0475C153.258 14.0453 153.256 14.0435 153.256 14.0416L153.256 14.0415C153.2 13.9422 153.144 13.8429 153.084 13.7481C153.078 13.7347 153.07 13.7213 153.061 13.7088L153.061 13.7088C153.056 13.7003 153.051 13.6922 153.047 13.6849L153.046 13.6835C153.014 13.6343 152.981 13.5851 152.945 13.5314C152.903 13.4682 152.861 13.4095 152.814 13.3463C152.642 13.107 152.457 12.8812 152.257 12.669C152.192 12.5968 152.122 12.5291 152.052 12.4659C152.046 12.4598 152.04 12.4533 152.034 12.4468L152.034 12.4468C152.021 12.4337 152.009 12.4207 151.996 12.4117C151.722 12.1453 151.429 11.9015 151.118 11.6848C150.974 11.5854 150.909 11.4139 150.946 11.2468C151.002 11.0166 151.044 10.7773 151.067 10.538C151.076 10.4567 151.081 10.3709 151.086 10.2851C151.086 10.2355 151.088 10.1869 151.09 10.1384C151.092 10.0899 151.095 10.0413 151.095 9.99165C151.095 9.47694 151.025 8.97578 150.89 8.50622L150.882 8.477C150.866 8.42254 150.85 8.36633 150.83 8.31659C150.546 7.43617 150.049 6.64605 149.394 6.00944C149.199 5.81529 148.985 5.6347 148.762 5.47216L148.752 5.46313C148.529 5.30059 148.297 5.15159 148.046 5.02517C147.688 4.83554 147.316 4.68204 146.921 4.56916C146.782 4.52401 146.647 4.49241 146.508 4.46532C146.108 4.37953 145.694 4.33438 145.271 4.33438C144.848 4.33438 144.435 4.37953 144.035 4.46532C143.896 4.49241 143.756 4.52853 143.621 4.56916C143.217 4.68655 142.827 4.84457 142.464 5.03872C142.39 5.07478 142.32 5.11535 142.251 5.15592L142.25 5.15611C141.851 5.3954 141.479 5.67985 141.149 6.00041C140.968 6.17649 140.796 6.36612 140.642 6.5693C140.238 7.084 139.922 7.67095 139.717 8.30756C139.694 8.37077 139.676 8.43398 139.657 8.49719C139.522 8.96675 139.452 9.46791 139.452 9.98262C139.452 10.082 139.452 10.1768 139.462 10.2761V10.2764C139.462 10.3214 139.462 10.3665 139.471 10.4115V10.4386V10.4928V10.5335V10.5425C139.476 10.5588 139.478 10.5763 139.481 10.5944C139.483 10.6113 139.485 10.6288 139.49 10.6463C139.49 10.6689 139.49 10.6915 139.499 10.7186V10.7186C139.499 10.7276 139.499 10.7366 139.508 10.7457C139.515 10.7807 139.526 10.8181 139.537 10.8545C139.541 10.8696 139.546 10.8846 139.55 10.8992C139.559 10.9488 139.578 10.9985 139.601 11.0482C139.638 11.1385 139.685 11.2242 139.731 11.3055C139.731 11.3145 139.741 11.3281 139.755 11.3371L139.775 11.3675C139.795 11.3963 139.813 11.4231 139.834 11.45C139.861 11.4906 139.894 11.5313 139.931 11.5674L139.931 11.5674C139.95 11.59 139.968 11.6125 139.987 11.6261C139.993 11.6321 139.999 11.6381 140.005 11.6441C140.016 11.6562 140.027 11.6682 140.043 11.6803C140.117 11.757 140.196 11.8202 140.284 11.8744C140.368 11.9286 140.456 11.9782 140.549 12.0234C140.554 12.0234 140.559 12.0257 140.563 12.0279C140.568 12.0302 140.573 12.0324 140.577 12.0324C140.619 12.055 140.661 12.0685 140.703 12.0821L140.703 12.0821C140.898 12.1543 141.116 12.195 141.339 12.195H146.958C148.148 12.195 149.213 12.5607 150.072 13.1702C151.411 14.1138 152.247 15.6444 152.271 17.2788C152.285 18.0193 152.131 18.7823 151.773 19.5228C151.341 20.4348 150.649 21.1798 149.812 21.699C148.975 22.2182 147.99 22.5072 146.958 22.5072H140.573C140.345 22.5072 140.14 22.3808 140.038 22.1821L138.435 19.0171C138.239 18.6333 138.528 18.1818 138.969 18.1818H147.042C147.307 18.1818 147.628 18.0012 147.762 17.7845C148.134 17.2382 147.735 16.5113 147.056 16.5113H140.758C140.447 16.5113 140.14 16.4842 139.843 16.439C137.775 16.1095 136.032 14.6917 135.404 12.7413C135.344 12.5607 135.297 12.3756 135.256 12.1904C135.088 11.4816 135 10.7411 135 9.97811C135 9.64851 135.014 9.32795 135.046 9.0119C135.056 8.88548 135.074 8.76358 135.093 8.64167C135.107 8.52428 135.125 8.40689 135.149 8.28951C135.167 8.18114 135.191 8.06827 135.214 7.95991C135.218 7.94162 135.221 7.92423 135.224 7.90736C135.228 7.88675 135.232 7.86689 135.237 7.84704C135.265 7.72073 135.297 7.59894 135.33 7.47715L135.33 7.47681C135.363 7.34136 135.404 7.21042 135.446 7.07949C135.476 6.98212 135.509 6.88764 135.542 6.79143L135.542 6.79142L135.567 6.71829C135.567 6.70549 135.572 6.69496 135.576 6.68508C135.578 6.68103 135.58 6.67708 135.581 6.67314C135.596 6.63258 135.611 6.59201 135.626 6.55145L135.626 6.55143L135.626 6.55142C135.656 6.47009 135.686 6.38876 135.72 6.30743C135.767 6.19004 135.813 6.08168 135.864 5.97332C135.874 5.94623 135.888 5.91463 135.902 5.88754C135.948 5.77929 136.004 5.67555 136.06 5.57181L136.06 5.57149V5.56246C136.181 5.32316 136.315 5.08838 136.455 4.85812C136.594 4.62786 136.748 4.40211 136.906 4.1899C136.906 4.1899 136.906 4.1899 136.908 4.1879C136.909 4.1866 136.911 4.18444 136.915 4.18087C137.152 3.85579 137.412 3.54877 137.691 3.25079C137.784 3.15146 137.877 3.05664 137.975 2.96183C138.133 2.80832 138.295 2.65932 138.463 2.51484C138.713 2.29813 138.974 2.09495 139.248 1.90081C139.329 1.84361 139.413 1.78642 139.498 1.72922C139.54 1.70063 139.583 1.67204 139.624 1.64345C139.755 1.56218 139.885 1.48091 140.019 1.40416C140.15 1.3274 140.284 1.25065 140.419 1.18292C140.689 1.04296 140.972 0.912026 141.256 0.794637L141.256 0.794606C141.4 0.735922 141.544 0.677239 141.688 0.627582C141.981 0.523738 142.283 0.428923 142.585 0.352169C142.648 0.33696 142.709 0.320328 142.769 0.303872L142.769 0.303869C142.817 0.291013 142.863 0.278264 142.91 0.266384C143.022 0.239294 143.129 0.216719 143.24 0.194144H143.25C143.561 0.13545 143.882 0.0857848 144.207 0.0541799C144.351 0.040635 144.495 0.02709 144.639 0.022575C144.848 0.00903005 145.062 0 145.271 0C145.443 0 145.615 0 145.787 0.013545C145.834 0.013545 145.876 0.013545 145.927 0.022575C145.968 0.0255192 146.008 0.0279834 146.048 0.0304371C146.131 0.0355091 146.214 0.0405362 146.298 0.0496648C146.318 0.0496648 146.336 0.0520755 146.353 0.0544057C146.369 0.0565854 146.385 0.0586948 146.401 0.0586948C146.531 0.0677248 146.661 0.0857846 146.786 0.103845C146.94 0.126419 147.089 0.148994 147.237 0.180599C147.307 0.189629 147.381 0.207689 147.451 0.225749C147.618 0.257354 147.786 0.297989 147.953 0.343139C148.078 0.370228 148.204 0.406348 148.329 0.446983C148.474 0.492133 148.618 0.537283 148.762 0.586948C149.059 0.690792 149.352 0.808182 149.635 0.939116C149.705 0.970721 149.775 1.00233 149.845 1.03845C149.871 1.05141 149.898 1.06399 149.925 1.07653C149.991 1.10767 150.056 1.13849 150.119 1.1739C150.147 1.18893 150.175 1.20397 150.203 1.21901C150.26 1.24912 150.317 1.27923 150.37 1.30934C150.376 1.30934 150.382 1.31336 150.388 1.31737C150.391 1.31938 150.395 1.32138 150.398 1.32289L150.649 1.47188C150.788 1.55315 150.932 1.64345 151.072 1.73827C151.137 1.7789 151.197 1.81954 151.262 1.8692C151.299 1.89622 151.336 1.92274 151.373 1.94926L151.374 1.9494L151.374 1.94942C151.448 2.00261 151.522 2.0558 151.597 2.11301L151.597 2.11313C151.629 2.13567 151.662 2.15822 151.699 2.18977L151.89 2.34328C151.969 2.40648 152.043 2.46969 152.117 2.53742C152.192 2.60063 152.261 2.66384 152.331 2.72705C152.484 2.86701 152.633 3.01149 152.773 3.16049C152.799 3.18982 152.827 3.21915 152.855 3.24879C152.897 3.29213 152.938 3.33613 152.977 3.38172C153.047 3.45396 153.112 3.53071 153.172 3.60295C153.214 3.64699 153.247 3.69102 153.284 3.73821L153.298 3.75646C153.328 3.78959 153.359 3.82758 153.388 3.86329L153.388 3.86332L153.419 3.90094C153.446 3.93496 153.471 3.96898 153.496 4.00212L153.496 4.00218L153.496 4.00229C153.514 4.02627 153.531 4.04979 153.549 4.07251C153.614 4.15378 153.67 4.23054 153.725 4.31181C153.809 4.4292 153.888 4.54207 153.962 4.65946C153.981 4.68203 153.995 4.70461 154.009 4.7317C154.093 4.85359 154.167 4.9845 154.241 5.11541L154.241 5.11547V5.1245C154.325 5.26898 154.399 5.40895 154.474 5.55794C154.553 5.71145 154.622 5.86044 154.687 6.01395C154.739 6.13134 154.79 6.24873 154.841 6.37064L154.883 6.479C154.929 6.59187 154.966 6.70023 155.003 6.81762C155.05 6.9305 155.082 7.03886 155.115 7.15624C155.148 7.25557 155.18 7.35942 155.203 7.46326C155.245 7.61226 155.282 7.75674 155.31 7.91025L155.319 7.94955C155.348 8.08928 155.377 8.22588 155.399 8.36626C155.487 8.89 155.533 9.42728 155.533 9.97811V10.0007ZM148.563 24.2454C148.885 24.2454 149.097 24.5863 148.956 24.8824C148.87 25.0641 148.784 25.2447 148.698 25.4253L148.697 25.4262C148.611 25.6064 148.526 25.7866 148.44 25.9679C147.876 27.1701 146.664 28 145.267 28C143.87 28 142.662 27.1701 142.093 25.9679L142.092 25.964L142.092 25.9638C141.92 25.6018 141.749 25.2399 141.578 24.8824C141.437 24.5863 141.648 24.2454 141.97 24.2454H148.563ZM147.6 8.59681C147.6 9.88547 146.555 10.9301 145.267 10.9301C143.978 10.9301 142.933 9.88547 142.933 8.59681C142.933 7.30814 143.978 6.26347 145.267 6.26347C146.555 6.26347 147.6 7.30814 147.6 8.59681Z" fill="url(#g1)"/>
+      <path d="M13.5635 25.2451C13.8851 25.2453 14.0961 25.5868 13.9551 25.8828C13.7833 26.246 13.6113 26.6046 13.4395 26.9678C12.8753 28.1699 11.6637 29 10.2666 29C8.86954 29 7.66227 28.17 7.09375 26.9678C6.92195 26.6046 6.74993 26.2415 6.57812 25.8828C6.43714 25.5869 6.64819 25.2454 6.96973 25.2451H13.5635ZM10.2715 1C10.4434 1 10.6152 1.00014 10.7871 1.01367C10.8336 1.01367 10.8756 1.01343 10.9268 1.02246C11.0522 1.03148 11.1734 1.03626 11.2988 1.0498C11.3357 1.04987 11.3681 1.05854 11.4004 1.05859C11.5304 1.06761 11.6608 1.08547 11.7861 1.10352C11.9395 1.12609 12.0886 1.14906 12.2373 1.18066C12.307 1.1897 12.3815 1.20753 12.4512 1.22559C12.6185 1.25719 12.7858 1.29763 12.9531 1.34277C13.0785 1.36984 13.2037 1.40667 13.3291 1.44727C13.4732 1.49242 13.6176 1.53725 13.7617 1.58691C14.0592 1.69076 14.3522 1.80852 14.6357 1.93945C14.7053 1.971 14.7751 2.00204 14.8447 2.03809C14.9377 2.08324 15.0308 2.12416 15.1191 2.17383C15.2027 2.21894 15.2912 2.26446 15.3701 2.30957C15.3793 2.30979 15.3883 2.31878 15.3975 2.32324C15.481 2.37286 15.5649 2.42207 15.6484 2.47168C15.7878 2.55291 15.9319 2.64351 16.0713 2.73828C16.1363 2.77885 16.1968 2.81958 16.2617 2.86914C16.3733 2.95041 16.4851 3.0275 16.5967 3.11328C16.6292 3.13583 16.6621 3.15789 16.6992 3.18945L16.8896 3.34375C16.9685 3.40682 17.043 3.46954 17.1172 3.53711C17.1915 3.60024 17.2614 3.66343 17.3311 3.72656C17.4843 3.86645 17.6331 4.01125 17.7725 4.16016C17.8375 4.2324 17.9125 4.30508 17.9775 4.38184C18.047 4.45384 18.1116 4.53052 18.1719 4.60254C18.2184 4.6522 18.256 4.70266 18.2979 4.75684C18.3396 4.80194 18.3818 4.85629 18.4189 4.90137C18.4653 4.95988 18.5071 5.01825 18.5488 5.07227C18.6139 5.1535 18.6698 5.23029 18.7256 5.31152C18.8092 5.42891 18.8885 5.54179 18.9629 5.65918C18.9814 5.68167 18.9949 5.70449 19.0088 5.73145C19.0924 5.85329 19.1669 5.98437 19.2412 6.11523C19.2412 6.11523 19.2412 6.11832 19.2412 6.12402C19.3248 6.26842 19.3993 6.40872 19.4736 6.55762C19.5526 6.71105 19.6225 6.86024 19.6875 7.01367C19.7386 7.13106 19.7897 7.24919 19.8408 7.37109C19.8547 7.40696 19.869 7.44265 19.8828 7.47852C19.9293 7.59136 19.9667 7.70003 20.0039 7.81738C20.0504 7.93026 20.0827 8.03886 20.1152 8.15625C20.1477 8.25543 20.1799 8.3592 20.2031 8.46289C20.245 8.61188 20.2827 8.75666 20.3105 8.91016C20.3431 9.06365 20.3752 9.21272 20.3984 9.36621C20.4867 9.88995 20.5332 10.4277 20.5332 10.9785V11.001C20.5332 11.1724 20.5335 11.3442 20.5195 11.5156V11.542C20.4916 12.1559 20.3987 12.7614 20.25 13.3438C20.0455 14.1745 19.7342 14.9652 19.3252 15.7012C19.1578 16.008 18.6978 15.9758 18.5537 15.6553V15.6465C18.5119 15.5472 18.4651 15.4436 18.4141 15.3398C18.3676 15.2451 18.3167 15.1544 18.2656 15.0596C18.2656 15.0508 18.2564 15.0464 18.2559 15.042C18.2001 14.9427 18.1444 14.8429 18.084 14.748C18.0747 14.7255 18.0562 14.7026 18.0469 14.6846C18.0144 14.635 17.9815 14.5854 17.9443 14.5312C17.9026 14.4682 17.8608 14.4097 17.8145 14.3467C17.6425 14.1074 17.4567 13.8811 17.2568 13.6689C17.1918 13.5967 17.1215 13.529 17.0518 13.4658C17.0333 13.4478 17.0146 13.4256 16.9961 13.4121C16.7219 13.1457 16.4296 12.9013 16.1182 12.6846C15.9742 12.5853 15.9092 12.4141 15.9463 12.2471C16.0021 12.0168 16.0441 11.7774 16.0674 11.5381C16.0767 11.4568 16.0813 11.3709 16.0859 11.2852C16.0859 11.1858 16.0947 11.0905 16.0947 10.9912C16.0947 10.4767 16.0254 9.97528 15.8906 9.50586C15.8721 9.44272 15.8533 9.37502 15.8301 9.31641C15.5466 8.43605 15.0488 7.64634 14.3936 7.00977C14.1984 6.81562 13.9848 6.63422 13.7617 6.47168C13.529 6.30048 13.2967 6.15173 13.0459 6.02539C12.688 5.83576 12.3159 5.68221 11.9209 5.56934C11.7816 5.52424 11.6471 5.49191 11.5078 5.46484C11.1082 5.37907 10.6944 5.334 10.2715 5.33398C9.84863 5.33398 9.43479 5.37909 9.03516 5.46484C8.89573 5.49193 8.75588 5.5287 8.62109 5.56934C8.21687 5.68672 7.82628 5.84497 7.46387 6.03906C7.38963 6.07514 7.31961 6.11568 7.25 6.15625C6.85042 6.3955 6.47833 6.67952 6.14844 7C5.96722 7.17604 5.79592 7.36622 5.64258 7.56934C5.23825 8.08403 4.92227 8.67103 4.71777 9.30762C4.69456 9.37076 4.6758 9.43392 4.65723 9.49707C4.52246 9.96657 4.45217 10.4678 4.45215 10.9824C4.45215 11.0818 4.45262 11.177 4.46191 11.2764C4.46191 11.3213 4.46152 11.3662 4.4707 11.4111V11.542C4.48 11.5736 4.47996 11.6104 4.48926 11.6465C4.48926 11.669 4.48975 11.6917 4.49902 11.7188C4.49902 11.7277 4.49858 11.7371 4.50781 11.7461C4.51713 11.7957 4.53589 11.8499 4.5498 11.8994C4.55911 11.949 4.57838 11.9983 4.60156 12.0479C4.63874 12.1382 4.68497 12.2244 4.73145 12.3057C4.73155 12.3147 4.74102 12.3279 4.75488 12.3369C4.78277 12.3775 4.8061 12.4141 4.83398 12.4502C4.86182 12.4907 4.89456 12.5314 4.93164 12.5674C4.95017 12.5899 4.96878 12.6125 4.9873 12.626C5.00583 12.644 5.01979 12.6626 5.04297 12.6807C5.11715 12.7572 5.19613 12.82 5.28418 12.874C5.36773 12.9281 5.45601 12.9783 5.54883 13.0234C5.55811 13.0234 5.56786 13.0322 5.57715 13.0322C5.61898 13.0548 5.6613 13.0685 5.70312 13.082C5.89823 13.1542 6.1169 13.1953 6.33984 13.1953H11.958C13.1477 13.1953 14.2125 13.5605 15.0723 14.1699C16.4108 15.1136 17.2473 16.6449 17.2705 18.2793C17.2844 19.0195 17.1311 19.7822 16.7734 20.5225C16.3412 21.4344 15.649 22.18 14.8125 22.6992C13.9759 23.2184 12.9898 23.5068 11.958 23.5068H5.57227C5.34465 23.5067 5.14029 23.3802 5.03809 23.1816L3.43457 20.0176C3.23942 19.6339 3.52743 19.1819 3.96875 19.1816H12.042C12.3069 19.1816 12.6279 19.0009 12.7627 18.7842C13.1341 18.2379 12.7341 17.5117 12.0557 17.5117H5.75879C5.4474 17.5117 5.14022 17.4846 4.84277 17.4395C2.77458 17.1099 1.03173 15.6917 0.404297 13.7412C0.343892 13.5606 0.297681 13.3755 0.255859 13.1904C0.0885739 12.4817 3.15036e-05 11.7414 0 10.9785C0 10.6489 0.0143415 10.3278 0.046875 10.0117C0.0561754 9.88537 0.0741931 9.76344 0.0927734 9.6416C0.106716 9.52423 0.125202 9.40644 0.148438 9.28906C0.167015 9.18083 0.190659 9.06818 0.213867 8.95996C0.265171 8.7204 0.297579 8.59834 0.330078 8.47656C0.362603 8.3412 0.404486 8.20996 0.446289 8.0791C0.48341 7.95744 0.525632 7.84042 0.567383 7.71875C0.62748 7.55106 0.66963 7.42941 0.720703 7.30762C0.76713 7.19035 0.813198 7.08188 0.864258 6.97363C0.947844 6.77934 1.0038 6.67513 1.05957 6.57129V6.5625C1.1804 6.32322 1.31566 6.08865 1.45508 5.8584C1.59451 5.62813 1.74725 5.40166 1.90527 5.18945C2.15202 4.85567 2.41261 4.54889 2.69141 4.25098C2.78433 4.15168 2.87704 4.0567 2.97461 3.96191C3.13263 3.80841 3.29558 3.65912 3.46289 3.51465C3.71377 3.29803 3.97395 3.09445 4.24805 2.90039C4.36871 2.81474 4.49872 2.72921 4.62402 2.64355C4.75415 2.56229 4.88476 2.48105 5.01953 2.4043C5.14965 2.32755 5.28418 2.25033 5.41895 2.18262C5.68851 2.04265 5.97235 1.91231 6.25586 1.79492C6.39976 1.7363 6.5436 1.67756 6.6875 1.62793C6.98027 1.5241 7.28289 1.42929 7.58496 1.35254C7.69644 1.32547 7.80332 1.29368 7.91016 1.2666C8.02167 1.23952 8.12873 1.2169 8.24023 1.19434H8.25C8.56127 1.13567 8.88183 1.0853 9.20703 1.05371C9.35108 1.04017 9.4956 1.02698 9.63965 1.02246C9.84866 1.00893 10.0625 1 10.2715 1ZM10.2666 7.26367C11.5552 7.26367 12.5995 8.30807 12.5996 9.59668C12.5996 10.8853 11.5553 11.9297 10.2666 11.9297C8.97797 11.9296 7.93359 10.8853 7.93359 9.59668C7.93366 8.3081 8.97802 7.26371 10.2666 7.26367Z" fill="url(#g2)"/>
+      <path d="M85.0596 11.4985V18.228C85.0597 18.8546 85.2292 19.3526 85.5625 19.7163C85.896 20.0801 86.3541 20.2599 86.9307 20.2544H87.0381C87.6147 20.26 88.0727 20.0802 88.4062 19.7163C88.7397 19.3525 88.9091 18.8547 88.9092 18.228V11.4985H92.6631V18.2896H92.6582C92.658 21.1108 90.3453 23.3999 87.4961 23.3999H86.4678C83.6186 23.3999 81.3059 21.1108 81.3057 18.2896V11.4985H85.0596ZM99.2783 11.353C100.115 11.353 100.884 11.4815 101.585 11.7446C102.286 12.0077 102.891 12.3884 103.399 12.8921C103.908 13.3959 104.304 14.0175 104.581 14.7563C104.858 15.4953 104.999 16.3465 104.999 17.3149V18.2329H97.1387C97.1567 18.7055 97.2517 19.1202 97.4238 19.4761C97.616 19.8733 97.893 20.1755 98.249 20.3882C98.6051 20.6008 99.0122 20.7075 99.4756 20.7075C99.7977 20.7075 100.092 20.6623 100.363 20.5728C100.629 20.4832 100.861 20.3486 101.048 20.1694C101.234 19.9903 101.382 19.7777 101.483 19.5259L104.92 19.6216C104.779 20.3882 104.468 21.0541 103.993 21.6138C103.513 22.1792 102.891 22.6164 102.116 22.9243C101.342 23.2322 100.443 23.3882 99.4141 23.3882V23.3999C98.1761 23.3999 97.1129 23.1593 96.2197 22.6724C95.3265 22.1909 94.6419 21.4967 94.167 20.6011C93.6921 19.7055 93.4551 18.6305 93.4551 17.3823C93.4551 16.1341 93.6924 15.1261 94.1729 14.2192C94.6534 13.318 95.3266 12.6127 96.1973 12.1089C97.0679 11.6051 98.0968 11.353 99.2783 11.353ZM32.6904 7.41162C33.889 7.41162 34.9636 7.61332 35.8682 8.02197C36.7727 8.43062 37.4623 9.00156 37.9541 9.73486C38.446 10.4682 38.7006 11.3191 38.7119 12.2876H35.0596C35.02 11.7278 34.7938 11.2967 34.3867 10.9888C33.9797 10.6809 33.4087 10.5239 32.6738 10.5239C32.1821 10.5239 31.7695 10.5854 31.4473 10.7085C31.1194 10.8316 30.8757 11.0107 30.7061 11.229C30.5421 11.4529 30.458 11.7057 30.458 11.98C30.4581 12.2876 30.548 12.545 30.7344 12.7632C30.9153 12.9815 31.1817 13.1606 31.5322 13.3062C31.8827 13.4517 32.2897 13.5804 32.7588 13.6812L34.0986 13.9839C34.8731 14.1518 35.557 14.3756 36.1562 14.6499C36.7555 14.9298 37.2592 15.2595 37.6719 15.6401C38.0846 16.0208 38.3953 16.4635 38.6045 16.9673C38.8137 17.4711 38.9209 18.0312 38.9209 18.647C38.9209 19.6376 38.6722 20.4827 38.1748 21.188C37.6773 21.8933 36.9652 22.4369 36.0381 22.812C35.111 23.187 33.9914 23.3774 32.6855 23.3774L32.6904 23.3882C31.3735 23.3881 30.2318 23.192 29.2539 22.8003C28.276 22.4085 27.5124 21.8099 26.9697 21.0151C26.4271 20.2203 26.1442 19.2124 26.1328 18.0034H29.7627C29.7967 18.4958 29.9376 18.9157 30.1807 19.2515C30.4237 19.5873 30.7517 19.8445 31.1699 20.0181C31.5882 20.1916 32.0801 20.2817 32.6396 20.2817C33.1539 20.2817 33.5895 20.2145 33.9512 20.0747C34.313 19.9348 34.5902 19.7438 34.7881 19.4976C34.986 19.2512 35.082 18.9709 35.082 18.6519C35.0819 18.361 34.992 18.1091 34.8057 17.9077C34.6248 17.7006 34.347 17.5215 33.9795 17.3647C33.6121 17.2081 33.137 17.0677 32.5605 16.939L30.9043 16.564C29.5532 16.2561 28.4901 15.7581 27.71 15.064C26.9299 14.3698 26.54 13.4291 26.54 12.2368C26.5401 11.2741 26.8053 10.4342 27.3311 9.70654C27.8568 8.98443 28.5863 8.41917 29.5078 8.01611C30.4349 7.61311 31.4921 7.41167 32.6904 7.41162ZM43.998 15.6802H44.0039L47.3047 11.5034H51.5684L46.8555 17.2407L51.5684 23.1753H46.9375L44.0234 19.4458L43.998 19.4771V23.1753H40.2441V7.61279H43.998V15.6802ZM56.2207 23.1753H52.4668V11.4985H56.2207V23.1753ZM61.7559 23.1753H58.002V7.61279H61.7559V23.1753ZM67.2793 23.1753H63.5254V7.61279H67.2793V23.1753ZM74.29 19.5425H74.4141L76.585 11.4976H80.4912L76.4375 23.1753H72.1357L68.1162 11.4976H72.0732L74.29 19.5425ZM99.3232 14.0229C98.8542 14.023 98.453 14.1295 98.1309 14.3364C97.8087 14.5435 97.5593 14.8346 97.3896 15.2095C97.2714 15.4711 97.195 15.7631 97.1592 16.0884H101.439C101.404 15.7626 101.333 15.473 101.223 15.2212C101.059 14.8405 100.821 14.5491 100.505 14.3364C100.188 14.1294 99.7924 14.0229 99.3232 14.0229ZM54.3379 6.6001C54.8691 6.6001 55.3274 6.77353 55.7061 7.11475C56.0848 7.46179 56.2714 7.88195 56.2715 8.37451C56.2715 8.86714 56.0848 9.29306 55.7061 9.64014C55.3274 9.98696 54.8748 10.1606 54.3379 10.1606C53.8123 10.1605 53.3543 9.9871 52.9756 9.64014C52.5968 9.29306 52.4053 8.87273 52.4053 8.37451C52.4053 7.87636 52.5968 7.46179 52.9756 7.11475C53.3543 6.76779 53.8067 6.60019 54.3379 6.6001Z" fill="#1A1A1A"/>
+      <defs>
+        <linearGradient id="g1" x1="147.95" y1="0.816667" x2="145.325" y2="27.8833" gradientUnits="userSpaceOnUse"><stop stop-color="#FFB74B"/><stop offset="0.487" stop-color="#FF6550"/><stop offset="1" stop-color="#6769FF"/></linearGradient>
+        <linearGradient id="g2" x1="12.95" y1="1.81667" x2="10.325" y2="28.8833" gradientUnits="userSpaceOnUse"><stop stop-color="#FFB74B"/><stop offset="0.487" stop-color="#FF6550"/><stop offset="1" stop-color="#6769FF"/></linearGradient>
+      </defs>
+    </svg>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">Assessment Competenze</span>
   </div>
   <div class="role-tabs">
     <button class="role-tab active" onclick="switchRole('sa')">Sales Advisor</button>
@@ -462,511 +605,466 @@
   </div>
 </header>
 
-<div class="container">
-  <sidebar id="sidebar"></sidebar>
-  <main id="main"></main>
-</div>
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar"></nav>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="content-inner" id="main-content"></div>
+</main>
 
 <script>
-// ────────────────────────────────────────────────────────────
-// DATA
-// ────────────────────────────────────────────────────────────
-
+// ── DATA ──────────────────────────────────────────────────────
 const DATA = {
   sa: {
     macro: [
-      {
-        name: "Customer & Sales Excellence",
-        color: "c0",
-        competenze: [
-          {
-            name: "Orientamento ai risultati",
-            dec: "Assicurare che i risultati siano dello standard richiesto e siano prodotti in tempo, attraverso lavoro sistematico e controllo della qualità.",
-            drivers: [
-              { name: "Mostrare orientamento al cliente", desc: "Comprendere e prioritizzare le richieste dei clienti e rispondere ai feedback." },
-              { name: "Definire standard di qualità", desc: "Definire e comunicare criteri rigorosi nei risultati ottenuti." },
-              { name: "Lavorare in modo sistematico", desc: "Seguire procedure organizzative e flussi di lavoro logici per mantenere consistenza ed efficienza." },
-              { name: "Garantire procedure di qualità", desc: "Mantenere processi e controlli documentati che sostengano la qualità degli output." },
-              { name: "Mantenere una buona produttività", desc: "Mantenere tassi e efficienza dei risultati per raggiungere target operativi." }
-            ],
-            questions: [
-              { text: "Descrivi un'interazione difficile con un cliente che hai affrontato sul lavoro. Quali azioni specifiche hai intrapreso per mantenere produttività ed efficienza durante l'interazione, rispettando allo stesso tempo gli standard di qualità, gli obiettivi operativi e le esigenze del cliente?", type: "behavioral" },
-              { text: "Immagina che una cliente torni in negozio con un capo acquistato da poco e dica che si è rovinato dopo il lavaggio. Come gestisci la situazione?", type: "situational" }
-            ]
-          },
-          {
-            name: "Persuasione",
-            dec: "Influenzare gli atteggiamenti, pensieri o comportamenti altrui attraverso una comunicazione strategica, inquadramento o appelli emotivi.",
-            drivers: [
-              { name: "Avere un impatto", desc: "Trasmettere messaggi o produrre azioni che lasciano un'impressione memorabile agli altri." },
-              { name: "Strutturare la conversazione", desc: "Orientare le discussioni per sottolineare priorità, inquadrare questioni e guidare la presa di decisioni." },
-              { name: "Suscitare emozioni", desc: "Usare contenuti o prospettive emozionali per creare una connessione con l'audience e motivare cambiamenti." }
-            ],
-            questions: [
-              { text: "Descrivi una situazione in cui hai cercato di convincere un cliente esitante ad acquistare un articolo. Quale approccio hai utilizzato e quali tecniche specifiche hai adottato per influenzare la sua decisione e concludere la vendita?", type: "behavioral" },
-              { text: "Una cliente entra in negozio, osserva i capi ma non esprime un'esigenza chiara. Come ti muovi per intuire il suo stile e l'occasione d'uso e trasformare quel momento in una proposta mirata?", type: "situational" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Collaboration & Team Contribution",
-        color: "c1",
-        competenze: [
-          {
-            name: "Teamwork",
-            dec: "Collaborare in modo efficace con colleghi, stakeholders e team members, adattando il proprio comportamento e favorendo un clima positivo all'interno del team.",
-            drivers: [
-              { name: "Comunicare proattivamente", desc: "Condividere informazioni, aggiornamenti e preoccupazioni in modo tempestivo per evitare fraintendimenti." },
-              { name: "Adattarsi al team", desc: "Adeguare il proprio comportamento per aderire alle norme del gruppo e aumentarne l'efficacia." },
-              { name: "Potenziare lo spirito di squadra", desc: "Contribuire attivamente alla coesione, creazione di senso di appartenenza e impegno reciproco fra membri del team." },
-              { name: "Riconoscere i contributi", desc: "Riconoscere gli sforzi e i successi degli altri, promuovendo un clima positivo all'interno del team." },
-              { name: "Sviluppare autoconsapevolezza", desc: "Riflettere sulle proprie aree di forza, limiti e motivazioni per migliorare la propria efficacia a livello interpersonale." }
-            ],
-            questions: [
-              { text: "Immagina di partecipare a una riunione di team in cui emergono opinioni contrastanti sulla strategia di marketing per il lancio di un nuovo prodotto. Come adatteresti il tuo comportamento per favorire la collaborazione e aiutare il team ad allinearsi sulla soluzione migliore? Descrivi le azioni che intraprenderesti e il motivo.", type: "situational" },
-              { text: "Durante un turno del fine settimana particolarmente intenso, noti che il team fatica a coordinarsi e che l'esperienza cliente rischia di diventare incoerente. Come prenderesti l'iniziativa per migliorare la comunicazione e aiutare il team a garantire un servizio di alta qualità?", type: "situational" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Brand Storytelling",
-        color: "c2",
-        competenze: [
-          {
-            name: "Narrative Communication",
-            dec: "La capacità di utilizzare messaggi strutturati come storie per raggiungere un obiettivo comunicativo (informare, persuadere, motivare, intrattenere) in un pubblico specifico.",
-            drivers: [
-              { name: "Veicolare un messaggio", desc: "Trasportare gli ascoltatori nel mondo della storia trasmettendo una trama coerente, immagini vivide e una bassa richiesta cognitiva." },
-              { name: "Mappatura emotiva", desc: "Identificare e mappare le emozioni per colpire e motivare gli ascoltatori." },
-              { name: "Identificazione dell'audience", desc: "Riconoscere gli ascoltatori e adattare il linguaggio, il tono e i dettagli della storia di conseguenza." },
-              { name: "Riduzione di resistenza", desc: "Ridurre lo scetticismo degli ascoltatori usando empatia, prove chiare e un inquadramento persuasivo." },
-              { name: "Consapevolezza culturale", desc: "Adattarsi ai valori, alle norme e agli stili comunicativi di diversi gruppi culturali quando si racconta una storia." }
-            ],
-            questions: [
-              { text: "Immagina che entri una cliente fidelizzata e che tu abbia a disposizione le informazioni del programma fedeltà. Come le usi per conoscerla meglio e proporle una vendita più personalizzata?", type: "situational" },
-              { text: "Immagina che una cliente individui un capo costoso e ti chieda perché ha questo prezzo o cosa lo renda 'di valore'. Come glielo spiegheresti, utilizzando la tua conoscenza dei materiali?", type: "situational" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Agility & Execution",
-        color: "c3",
-        competenze: [
-          {
-            name: "Flessibilità cognitiva",
-            dec: "Cambiare pensieri, comportamenti e approcci interpersonali per allinearsi a nuove condizioni, idee o contesti culturali.",
-            drivers: [
-              { name: "Adattarsi alle situazioni", desc: "Modificare azioni o piani per adattarsi a circostanze nuove." },
-              { name: "Raccogliere informazioni", desc: "Ricercare in modo sistematico dati rilevanti, evidenze e prospettive per comprendere e prendere decisioni." },
-              { name: "Adattare il proprio stile interpersonale", desc: "Adattare la propria comunicazione e comportamenti a persone o circostanze diverse." },
-              { name: "Mostrare consapevolezza culturale", desc: "Riconoscere e rispettare differenze culturali e modificare il proprio comportamento di conseguenza." },
-              { name: "Gestire ambiguità", desc: "Agire in modo efficace anche quando le informazioni sono incomplete o poco chiare." }
-            ],
-            questions: [
-              { text: "Immagina di assistere un cliente nella scelta di un outfit per un importante evento familiare, ma il cliente non è sicuro dello stile o dei colori più adatti. Come lo guideresti nella scelta di un abbigliamento che rispecchi i suoi gusti personali e sia appropriato per l'occasione?", type: "situational" },
-              { text: "Stai assistendo un cliente nella scelta di un outfit per un importante incontro di lavoro. Durante la conversazione scopri che il cliente proviene da un contesto culturale diverso e ha esigenze specifiche che inizialmente non conoscevi. Come adatteresti il tuo approccio di vendita e il tuo stile di comunicazione per soddisfare le sue esigenze, concludere la vendita e dimostrare sensibilità culturale?", type: "situational" }
-            ]
-          },
-          {
-            name: "Dimostrare expertise",
-            dec: "Usare e sviluppare conoscenza in un dominio specifico, abilità fisiche o strumenti tecnologici per eseguire i task in modo efficiente.",
-            drivers: [
-              { name: "Applicare competenze tecniche", desc: "Mettere in pratica conoscenza e metodi specializzati in modo accurato per completare compiti tecnici." },
-              { name: "Acquisire competenze tecniche", desc: "Sviluppare conoscenze nel proprio dominio in modo sistematico attraverso apprendimento e pratica." },
-              { name: "Condividere competenza", desc: "Condividere conoscenze tecniche con gli altri attraverso mezzi accessibili." },
-              { name: "Usare la tecnologia", desc: "Usare gli strumenti digitali o fisici più appropriati per supportare attività di analisi, comunicazione ed esecuzione dei compiti." },
-              { name: "Dimostrare abilità manuali", desc: "Applicare il proprio know-how nell'affrontare attività manuali." }
-            ],
-            questions: [
-              { text: "Immagina che una cliente sia in camerino e stia provando un capo che le piace. Come costruisci una proposta complementare coerente per completare il look e accompagnarla naturalmente all'acquisto?", type: "situational" },
-              { text: "Descrivi una situazione in cui hai aiutato un cliente esitante a comprendere e apprezzare le caratteristiche e i benefici di un capo di abbigliamento. Quali passaggi hai seguito per rispondere alle sue preoccupazioni, dimostrare la tua competenza e guidarlo verso una scelta soddisfacente?", type: "behavioral" }
-            ]
-          }
-        ]
-      }
+      { name:"Customer & Sales Excellence", color:"mc0", competenze:[
+        { name:"Orientamento ai risultati",
+          dec:"Assicurare che i risultati siano dello standard richiesto e siano prodotti in tempo, attraverso lavoro sistematico e controllo della qualità.",
+          drivers:[
+            {name:"Mostrare orientamento al cliente", desc:"Comprendere e prioritizzare le richieste dei clienti e rispondere ai feedback."},
+            {name:"Definire standard di qualità", desc:"Definire e comunicare criteri rigorosi nei risultati ottenuti."},
+            {name:"Lavorare in modo sistematico", desc:"Seguire procedure organizzative e flussi di lavoro logici per mantenere consistenza ed efficienza."},
+            {name:"Garantire procedure di qualità", desc:"Mantenere processi e controlli documentati che sostengano la qualità degli output."},
+            {name:"Mantenere una buona produttività", desc:"Mantenere tassi e efficienza dei risultati per raggiungere target operativi."}
+          ],
+          questions:[
+            {text:"Descrivi un'interazione difficile con un cliente che hai affrontato sul lavoro. Quali azioni specifiche hai intrapreso per mantenere produttività ed efficienza durante l'interazione, rispettando allo stesso tempo gli standard di qualità, gli obiettivi operativi e le esigenze del cliente?", type:"behavioral"},
+            {text:"Immagina che una cliente torni in negozio con un capo acquistato da poco e dica che si è rovinato dopo il lavaggio. Come gestisci la situazione?", type:"situational"}
+          ]
+        },
+        { name:"Persuasione",
+          dec:"Influenzare gli atteggiamenti, pensieri o comportamenti altrui attraverso una comunicazione strategica, inquadramento o appelli emotivi.",
+          drivers:[
+            {name:"Avere un impatto", desc:"Trasmettere messaggi o produrre azioni che lasciano un'impressione memorabile agli altri."},
+            {name:"Strutturare la conversazione", desc:"Orientare le discussioni per sottolineare priorità, inquadrare questioni e guidare la presa di decisioni."},
+            {name:"Suscitare emozioni", desc:"Usare contenuti o prospettive emozionali per creare una connessione con l'audience e motivare cambiamenti."}
+          ],
+          questions:[
+            {text:"Descrivi una situazione in cui hai cercato di convincere un cliente esitante ad acquistare un articolo. Quale approccio hai utilizzato e quali tecniche specifiche hai adottato per influenzare la sua decisione e concludere la vendita?", type:"behavioral"},
+            {text:"Una cliente entra in negozio, osserva i capi ma non esprime un'esigenza chiara. Come ti muovi per intuire il suo stile e l'occasione d'uso e trasformare quel momento in una proposta mirata?", type:"situational"}
+          ]
+        }
+      ]},
+      { name:"Collaboration & Team Contribution", color:"mc1", competenze:[
+        { name:"Teamwork",
+          dec:"Collaborare in modo efficace con colleghi, stakeholders e team members, adattando il proprio comportamento e favorendo un clima positivo all'interno del team.",
+          drivers:[
+            {name:"Comunicare proattivamente", desc:"Condividere informazioni, aggiornamenti e preoccupazioni in modo tempestivo per evitare fraintendimenti."},
+            {name:"Adattarsi al team", desc:"Adeguare il proprio comportamento per aderire alle norme del gruppo e aumentarne l'efficacia."},
+            {name:"Potenziare lo spirito di squadra", desc:"Contribuire attivamente alla coesione, creazione di senso di appartenenza e impegno reciproco fra membri del team."},
+            {name:"Riconoscere i contributi", desc:"Riconoscere gli sforzi e i successi degli altri, promuovendo un clima positivo all'interno del team."},
+            {name:"Sviluppare autoconsapevolezza", desc:"Riflettere sulle proprie aree di forza, limiti e motivazioni per migliorare la propria efficacia a livello interpersonale."}
+          ],
+          questions:[
+            {text:"Immagina di partecipare a una riunione di team in cui emergono opinioni contrastanti sulla strategia di marketing per il lancio di un nuovo prodotto. Come adatteresti il tuo comportamento per favorire la collaborazione e aiutare il team ad allinearsi sulla soluzione migliore?", type:"situational"},
+            {text:"Durante un turno del fine settimana particolarmente intenso, noti che il team fatica a coordinarsi e che l'esperienza cliente rischia di diventare incoerente. Come prenderesti l'iniziativa per migliorare la comunicazione e aiutare il team a garantire un servizio di alta qualità?", type:"situational"}
+          ]
+        }
+      ]},
+      { name:"Brand Storytelling", color:"mc2", competenze:[
+        { name:"Narrative Communication",
+          dec:"La capacità di utilizzare messaggi strutturati come storie per raggiungere un obiettivo comunicativo (informare, persuadere, motivare, intrattenere) in un pubblico specifico.",
+          drivers:[
+            {name:"Veicolare un messaggio", desc:"Trasportare gli ascoltatori nel mondo della storia trasmettendo una trama coerente, immagini vivide e una bassa richiesta cognitiva."},
+            {name:"Mappatura emotiva", desc:"Identificare e mappare le emozioni per colpire e motivare gli ascoltatori."},
+            {name:"Identificazione dell'audience", desc:"Riconoscere gli ascoltatori e adattare il linguaggio, il tono e i dettagli della storia di conseguenza."},
+            {name:"Riduzione di resistenza", desc:"Ridurre lo scetticismo degli ascoltatori usando empatia, prove chiare e un inquadramento persuasivo."},
+            {name:"Consapevolezza culturale", desc:"Adattarsi ai valori, alle norme e agli stili comunicativi di diversi gruppi culturali quando si racconta una storia."}
+          ],
+          questions:[
+            {text:"Immagina che entri una cliente fidelizzata e che tu abbia a disposizione le informazioni del programma fedeltà. Come le usi per conoscerla meglio e proporle una vendita più personalizzata?", type:"situational"},
+            {text:"Immagina che una cliente individui un capo costoso e ti chieda perché ha questo prezzo o cosa lo renda 'di valore'. Come glielo spiegheresti, utilizzando la tua conoscenza dei materiali?", type:"situational"}
+          ]
+        }
+      ]},
+      { name:"Agility & Execution", color:"mc3", competenze:[
+        { name:"Flessibilità cognitiva",
+          dec:"Cambiare pensieri, comportamenti e approcci interpersonali per allinearsi a nuove condizioni, idee o contesti culturali.",
+          drivers:[
+            {name:"Adattarsi alle situazioni", desc:"Modificare azioni o piani per adattarsi a circostanze nuove."},
+            {name:"Raccogliere informazioni", desc:"Ricercare in modo sistematico dati rilevanti, evidenze e prospettive per comprendere e prendere decisioni."},
+            {name:"Adattare il proprio stile interpersonale", desc:"Adattare la propria comunicazione e comportamenti a persone o circostanze diverse."},
+            {name:"Mostrare consapevolezza culturale", desc:"Riconoscere e rispettare differenze culturali e modificare il proprio comportamento di conseguenza."},
+            {name:"Gestire ambiguità", desc:"Agire in modo efficace anche quando le informazioni sono incomplete o poco chiare."}
+          ],
+          questions:[
+            {text:"Immagina di assistere un cliente nella scelta di un outfit per un importante evento familiare, ma il cliente non è sicuro dello stile o dei colori più adatti. Come lo guideresti nella scelta di un abbigliamento che rispecchi i suoi gusti personali e sia appropriato per l'occasione?", type:"situational"},
+            {text:"Stai assistendo un cliente nella scelta di un outfit per un importante incontro di lavoro. Durante la conversazione scopri che il cliente proviene da un contesto culturale diverso e ha esigenze specifiche. Come adatteresti il tuo approccio di vendita e il tuo stile di comunicazione?", type:"situational"}
+          ]
+        },
+        { name:"Dimostrare expertise",
+          dec:"Usare e sviluppare conoscenza in un dominio specifico, abilità fisiche o strumenti tecnologici per eseguire i task in modo efficiente.",
+          drivers:[
+            {name:"Applicare competenze tecniche", desc:"Mettere in pratica conoscenza e metodi specializzati in modo accurato per completare compiti tecnici."},
+            {name:"Acquisire competenze tecniche", desc:"Sviluppare conoscenze nel proprio dominio in modo sistematico attraverso apprendimento e pratica."},
+            {name:"Condividere competenza", desc:"Condividere conoscenze tecniche con gli altri attraverso mezzi accessibili."},
+            {name:"Usare la tecnologia", desc:"Usare gli strumenti digitali o fisici più appropriati per supportare attività di analisi, comunicazione ed esecuzione dei compiti."},
+            {name:"Dimostrare abilità manuali", desc:"Applicare il proprio know-how nell'affrontare attività manuali."}
+          ],
+          questions:[
+            {text:"Immagina che una cliente sia in camerino e stia provando un capo che le piace. Come costruisci una proposta complementare coerente per completare il look e accompagnarla naturalmente all'acquisto?", type:"situational"},
+            {text:"Descrivi una situazione in cui hai aiutato un cliente esitante a comprendere e apprezzare le caratteristiche e i benefici di un capo di abbigliamento. Quali passaggi hai seguito per rispondere alle sue preoccupazioni, dimostrare la tua competenza e guidarlo verso una scelta soddisfacente?", type:"behavioral"}
+          ]
+        }
+      ]}
     ]
   },
-
   sm: {
     macro: [
-      {
-        name: "Customer & Sales Excellence",
-        color: "c0",
-        competenze: [
-          {
-            name: "Orientamento ai risultati",
-            dec: "Assicurare che i risultati siano dello standard richiesto e siano prodotti in tempo, attraverso lavoro sistematico e controllo della qualità.",
-            drivers: [
-              { name: "Mostrare orientamento al cliente", desc: "Comprendere e prioritizzare le richieste dei clienti e rispondere ai feedback." },
-              { name: "Definire standard di qualità", desc: "Definire e comunicare criteri rigorosi nei risultati ottenuti." },
-              { name: "Lavorare in modo sistematico", desc: "Seguire procedure organizzative e flussi di lavoro logici per mantenere consistenza ed efficienza." },
-              { name: "Garantire procedure di qualità", desc: "Mantenere processi e controlli documentati che sostengano la qualità degli output." },
-              { name: "Mantenere una buona produttività", desc: "Mantenere tassi e efficienza dei risultati per raggiungere target operativi." }
-            ],
-            questions: [
-              { text: "Descrivi una situazione in cui eri responsabile della consegna di un deliverable critico per un cliente, ma hai incontrato problemi imprevisti che rischiavano di compromettere la qualità del risultato finale. Quali azioni specifiche hai intrapreso per garantire che il deliverable soddisfacesse comunque i requisiti del cliente e quali sono stati i risultati?", type: "behavioral" },
-              { text: "Immagina che una cliente torni in negozio con un capo acquistato da poco e dica che si è rovinato dopo il lavaggio. Come gestisci la situazione?", type: "situational" }
-            ]
-          },
-          {
-            name: "Persuasione",
-            dec: "Influenzare gli atteggiamenti, pensieri o comportamenti altrui attraverso una comunicazione strategica, inquadramento o appelli emotivi.",
-            drivers: [
-              { name: "Avere un impatto", desc: "Trasmettere messaggi o produrre azioni che lasciano un'impressione memorabile agli altri." },
-              { name: "Strutturare la conversazione", desc: "Orientare le discussioni per sottolineare priorità, inquadrare questioni e guidare la presa di decisioni." },
-              { name: "Suscitare emozioni", desc: "Usare contenuti o prospettive emozionali per creare una connessione con l'audience e motivare cambiamenti." }
-            ],
-            questions: [
-              { text: "Descrivi una situazione in cui hai cercato di convincere un cliente esitante ad acquistare un articolo. Quale approccio hai utilizzato e quali tecniche specifiche hai adottato per influenzare la sua decisione e concludere la vendita?", type: "behavioral" },
-              { text: "Una cliente entra in negozio, osserva i capi ma non esprime un'esigenza chiara. Come ti muovi per intuire il suo stile e l'occasione d'uso e trasformare quel momento in una proposta mirata?", type: "situational" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Leadership & People Management",
-        color: "c1",
-        competenze: [
-          {
-            name: "Leading",
-            dec: "Dirigere, coordinare e decidere, per raggiungere gli obiettivi dell'organizzazione.",
-            drivers: [
-              { name: "Coordinare l'azione", desc: "Chiarire obiettivi, priorità e tempistiche e coordinare le attività del team per raggiungere quanto prefissato." },
-              { name: "Delegare", desc: "Assegnare la responsabilità ai membri del team su task e decisioni, assumendosi la responsabilità dei risultati." },
-              { name: "Prendere decisioni", desc: "Scegliere un piano d'azione dopo aver considerato informazioni rilevanti e possibili alternative." },
-              { name: "Assumersi responsabilità", desc: "Accettare gli oneri di decisioni, risultati e conseguenze, incluso ammettere errori e imparare da essi." },
-              { name: "Mostrare consapevolezza cross-funzionale", desc: "Capire come diverse funzioni organizzative sono collegate e incorporare questa prospettiva nel proprio lavoro." }
-            ],
-            questions: [
-              { text: "Come responsabile di un negozio di abbigliamento, noti un recente calo della produttività e un aumento dei conflitti all'interno del team, incluso il supervisore recentemente promosso. Come lavoreresti con il team per migliorare il coordinamento e il processo decisionale, assicurandoti allo stesso tempo una collaborazione efficace con altri reparti chiave come gestione dell'inventario e servizio clienti?", type: "situational" },
-              { text: "Descrivi una situazione in cui hai dovuto coordinare il tuo team retail per raggiungere un importante obiettivo di vendita. Quali azioni specifiche hai intrapreso per allineare priorità e tempistiche tra le diverse funzioni del negozio, come operazioni, marketing e servizio clienti? Come hai fatto a mettere il team sulla stessa lunghezza d'onda e quali risultati hai ottenuto?", type: "behavioral" }
-            ]
-          },
-          {
-            name: "Mentoring",
-            dec: "Supervisionare, supportare e motivare gli altri per raggiungere gli obiettivi dell'organizzazione.",
-            drivers: [
-              { name: "Supervisionare", desc: "Osservare la performance, assicurando che gli standard siano rispettati." },
-              { name: "Coaching", desc: "Guidare i membri del team a sviluppare competenze, riflettere sulla propria performance e imparare per migliorare capacità e performance." },
-              { name: "Responsabilizzare il team", desc: "Creare le condizioni affinché i membri del team abbiano autonomia, risorse e sicurezza per prendere decisioni e agire." },
-              { name: "Motivare il team", desc: "Stimolare e sostenere gli sforzi dei membri del team verso il raggiungimento di obiettivi." },
-              { name: "Far crescere il team", desc: "Agevolare la crescita dei collaboratori attraverso training, progetti assegnati, feedback e supporti di carriera affinché acquisiscano abilità utili per il ruolo attuale e posizioni future." },
-              { name: "Individuare il talento", desc: "Riconoscere capability needs attuali e futuri, individuando candidati con potenziale e selezionando persone con competenze e profilo in linea con le richieste dell'organizzazione." }
-            ],
-            questions: [
-              { text: "Sei uno store manager e hai recentemente promosso il tuo miglior addetto alle vendite al ruolo di assistente manager. Tuttavia, noti che fatica a fare da mentore e a sviluppare il resto del team. La produttività e il morale sono diminuiti e il team non sta raggiungendo gli obiettivi di vendita principali. Come faresti per osservare il suo approccio di mentoring, fornirgli feedback e supportarlo nel coaching del team per migliorare le competenze e aumentare le performance complessive?", type: "situational" },
-              { text: "Descrivi una situazione in cui hai dovuto fornire coaching e supporto a un nuovo dipendente che faticava a soddisfare le aspettative di performance nel tuo negozio di abbigliamento. Quali passi specifici hai intrapreso per aiutarlo a migliorare e quali risultati hai ottenuto?", type: "behavioral" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Store Operations",
-        color: "c3",
-        competenze: [
-          {
-            name: "Organizzare e pianificare",
-            dec: "Stabilire obiettivi, sviluppare programmi, definire la priorità dei task e organizzare le risorse per raggiungere risultati in modo efficiente.",
-            drivers: [
-              { name: "Definire obiettivi", desc: "Definire obiettivi chiari, misurabili e vincolati alle tempistiche, per guidare l'azione." },
-              { name: "Sviluppare piani d'azione", desc: "Sviluppare piani divisi in più step e tempistiche per raggiungere gli obiettivi." },
-              { name: "Gestire progetti", desc: "Coordinare task, rimuovere ostacoli e assicurare il completamento dei progetti." },
-              { name: "Gestire il tempo", desc: "Allocare e programmare il proprio tempo in modo efficace per gestire scadenze e priorità." },
-              { name: "Gestire risorse", desc: "Assegnare e ottimizzare l'uso di persone, budget, strumenti e informazioni in supporto dei piani." },
-              { name: "Monitorare i progressi", desc: "Tenere traccia di milestones e indicatori di performance e mettere in atto azioni correttive in caso di deviazioni dai piani." }
-            ],
-            questions: [
-              { text: "Descrivi una situazione in cui hai dovuto gestire più priorità e risorse limitate per portare a termine un progetto importante per il tuo negozio. Quali sfide hai incontrato e come hai adattato il tuo approccio per garantire il successo del progetto?", type: "behavioral" },
-              { text: "Come responsabile di un negozio di abbigliamento, il tuo team fatica a gestire l'elevata domanda stagionale a causa di scorte limitate e ritardi nelle spedizioni. Come utilizzeresti le tue capacità di pianificazione e organizzazione per definire obiettivi di performance chiari, monitorare i progressi e adottare azioni correttive per rimettere il negozio sulla giusta strada e soddisfare le esigenze dei clienti?", type: "situational" }
-            ]
-          },
-          {
-            name: "Business acumen",
-            dec: "Identificare e sfruttare opportunità commerciali, mantenendo una consapevolezza di mercato, e usare leve economiche e organizzative per creare valore.",
-            drivers: [
-              { name: "Monitorare il mercato", desc: "Mantenersi al corrente di trend di mercato, azioni dei competitor e bisogni dei clienti per anticipare i cambiamenti." },
-              { name: "Identificare le opportunità", desc: "Individuare gap o nuove combinazioni di risorse che possono essere trasformati in iniziative imprenditoriali praticabili." },
-              { name: "Anticipare i trend", desc: "Mostrare acume nel business per prevedere trend di mercato e perseguire opportunità commerciali con accuratezza." },
-              { name: "Tenere sotto controllo i costi", desc: "Gestire le spese in modo prudente per proteggere il margine e allocare le risorse in modo efficiente." },
-              { name: "Avere consapevolezza organizzativa", desc: "Mostrare consapevolezza verso limiti interni, priorità degli stakeholders e fattori strutturali che impattano sul successo di un'iniziativa imprenditoriale." }
-            ],
-            questions: [
-              { text: "Il tuo negozio ha registrato un calo delle scorte e del traffico dei clienti per diversi trimestri. Il responsabile regionale ti ha dato un mese per presentare un piano di rilancio. Considerando le tendenze di mercato e i vincoli operativi interni, quali opportunità di prodotto o servizio individueresti per recuperare redditività? Come ti assicureresti che il piano sia allineato con le priorità del responsabile regionale?", type: "situational" },
-              { text: "Descrivi una situazione in cui hai dovuto prendere una decisione critica sulla gestione dell'inventario che andava contro le preferenze di un cliente a causa di vincoli finanziari. Quali azioni hai intrapreso per gestire la situazione e quali risultati hai ottenuto?", type: "behavioral" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Problem Solving & Agility",
-        color: "c4",
-        competenze: [
-          {
-            name: "Strategia e visione",
-            dec: "Sviluppare piani di alto livello e strutture concettuali che comprendano risorse, capacità e analisi del contesto per raggiungere obiettivi a lungo termine.",
-            drivers: [
-              { name: "Anticipare gli sviluppi", desc: "Nel formulare piani, considerare un contesto più ampio, conseguenze a lungo termine e le prospettive di più stakeholder." },
-              { name: "Bilanciare le strategie", desc: "Prioritizzare le attività basandosi sul loro impatto, in maniera ragionata e sostenibile." },
-              { name: "Determinare la vision", desc: "Creare una visione di futuro a lungo termine per ispirare impegno." },
-              { name: "Validare strategie", desc: "Ideare, implementare e riprodurre strategie fondate su analisi e capacità dell'organizzazione, per validarne l'impatto." }
-            ],
-            questions: [
-              { text: "Descrivi una recente situazione operativa in cui hai dovuto bilanciare le esigenze e le priorità del tuo negozio, dei clienti e del team. Quali fattori hai considerato nello sviluppare il tuo approccio e come hai valutato l'impatto della tua decisione?", type: "behavioral" },
-              { text: "Descrivi una situazione in cui hai dovuto prendere una decisione strategica che richiedeva di bilanciare priorità a breve e a lungo termine per il tuo team o il tuo negozio. Quali fattori hai considerato nel processo decisionale e quali risultati ha prodotto il tuo approccio?", type: "behavioral" }
-            ]
-          },
-          {
-            name: "Dimostrare expertise",
-            dec: "Usare e sviluppare conoscenza in un dominio specifico, abilità fisiche o strumenti tecnologici per eseguire i task in modo efficiente.",
-            drivers: [
-              { name: "Applicare competenze tecniche", desc: "Mettere in pratica conoscenza e metodi specializzati in modo accurato per completare compiti tecnici." },
-              { name: "Acquisire competenze tecniche", desc: "Sviluppare conoscenze nel proprio dominio in modo sistematico attraverso apprendimento e pratica." },
-              { name: "Condividere competenza", desc: "Condividere conoscenze tecniche con gli altri attraverso mezzi accessibili." },
-              { name: "Usare la tecnologia", desc: "Usare gli strumenti digitali o fisici più appropriati per supportare attività di analisi, comunicazione ed esecuzione dei compiti." },
-              { name: "Dimostrare abilità manuali", desc: "Applicare il proprio know-how nell'affrontare attività manuali." }
-            ],
-            questions: [
-              { text: "Immagina che una cliente sia in camerino e stia provando un capo che le piace. Come costruisci una proposta complementare coerente per completare il look e accompagnarla naturalmente all'acquisto?", type: "situational" },
-              { text: "Descrivi una situazione in cui hai aiutato un cliente esitante a comprendere e apprezzare le caratteristiche e i benefici di un capo di abbigliamento. Quali passaggi hai seguito per rispondere alle sue preoccupazioni, dimostrare la tua competenza e guidarlo verso una scelta soddisfacente?", type: "behavioral" }
-            ]
-          }
-        ]
-      },
-      {
-        name: "Brand Storytelling",
-        color: "c2",
-        competenze: [
-          {
-            name: "Narrative Communication",
-            dec: "La capacità di utilizzare messaggi strutturati come storie per raggiungere un obiettivo comunicativo (informare, persuadere, motivare, intrattenere) in un pubblico specifico.",
-            drivers: [
-              { name: "Veicolare un messaggio", desc: "Trasportare gli ascoltatori nel mondo della storia trasmettendo una trama coerente, immagini vivide e una bassa richiesta cognitiva." },
-              { name: "Mappatura emotiva", desc: "Identificare e mappare le emozioni per colpire e motivare gli ascoltatori." },
-              { name: "Identificazione dell'audience", desc: "Riconoscere gli ascoltatori e adattare il linguaggio, il tono e i dettagli della storia di conseguenza." },
-              { name: "Riduzione di resistenza", desc: "Ridurre lo scetticismo degli ascoltatori usando empatia, prove chiare e un inquadramento persuasivo." },
-              { name: "Consapevolezza culturale", desc: "Adattarsi ai valori, alle norme e agli stili comunicativi di diversi gruppi culturali quando si racconta una storia." }
-            ],
-            questions: [
-              { text: "Immagina che una cliente individui un capo costoso e ti chieda perché ha questo prezzo o cosa lo renda 'di valore'. Come glielo spiegheresti, utilizzando la tua conoscenza dei materiali?", type: "situational" },
-              { text: "Immagina che entri una cliente fidelizzata e che tu abbia a disposizione le informazioni del programma fedeltà. Come le usi per conoscerla meglio e proporle una vendita più personalizzata?", type: "situational" }
-            ]
-          }
-        ]
-      }
+      { name:"Customer & Sales Excellence", color:"mc0", competenze:[
+        { name:"Orientamento ai risultati",
+          dec:"Assicurare che i risultati siano dello standard richiesto e siano prodotti in tempo, attraverso lavoro sistematico e controllo della qualità.",
+          drivers:[
+            {name:"Mostrare orientamento al cliente", desc:"Comprendere e prioritizzare le richieste dei clienti e rispondere ai feedback."},
+            {name:"Definire standard di qualità", desc:"Definire e comunicare criteri rigorosi nei risultati ottenuti."},
+            {name:"Lavorare in modo sistematico", desc:"Seguire procedure organizzative e flussi di lavoro logici per mantenere consistenza ed efficienza."},
+            {name:"Garantire procedure di qualità", desc:"Mantenere processi e controlli documentati che sostengano la qualità degli output."},
+            {name:"Mantenere una buona produttività", desc:"Mantenere tassi e efficienza dei risultati per raggiungere target operativi."}
+          ],
+          questions:[
+            {text:"Descrivi una situazione in cui eri responsabile della consegna di un deliverable critico per un cliente, ma hai incontrato problemi imprevisti che rischiavano di compromettere la qualità del risultato finale. Quali azioni specifiche hai intrapreso per garantire che il deliverable soddisfacesse comunque i requisiti del cliente e quali sono stati i risultati?", type:"behavioral"},
+            {text:"Immagina che una cliente torni in negozio con un capo acquistato da poco e dica che si è rovinato dopo il lavaggio. Come gestisci la situazione?", type:"situational"}
+          ]
+        },
+        { name:"Persuasione",
+          dec:"Influenzare gli atteggiamenti, pensieri o comportamenti altrui attraverso una comunicazione strategica, inquadramento o appelli emotivi.",
+          drivers:[
+            {name:"Avere un impatto", desc:"Trasmettere messaggi o produrre azioni che lasciano un'impressione memorabile agli altri."},
+            {name:"Strutturare la conversazione", desc:"Orientare le discussioni per sottolineare priorità, inquadrare questioni e guidare la presa di decisioni."},
+            {name:"Suscitare emozioni", desc:"Usare contenuti o prospettive emozionali per creare una connessione con l'audience e motivare cambiamenti."}
+          ],
+          questions:[
+            {text:"Descrivi una situazione in cui hai cercato di convincere un cliente esitante ad acquistare un articolo. Quale approccio hai utilizzato e quali tecniche specifiche hai adottato per influenzare la sua decisione e concludere la vendita?", type:"behavioral"},
+            {text:"Una cliente entra in negozio, osserva i capi ma non esprime un'esigenza chiara. Come ti muovi per intuire il suo stile e l'occasione d'uso e trasformare quel momento in una proposta mirata?", type:"situational"}
+          ]
+        }
+      ]},
+      { name:"Leadership & People Management", color:"mc1", competenze:[
+        { name:"Leading",
+          dec:"Dirigere, coordinare e decidere, per raggiungere gli obiettivi dell'organizzazione.",
+          drivers:[
+            {name:"Coordinare l'azione", desc:"Chiarire obiettivi, priorità e tempistiche e coordinare le attività del team per raggiungere quanto prefissato."},
+            {name:"Delegare", desc:"Assegnare la responsabilità ai membri del team su task e decisioni, assumendosi la responsabilità dei risultati."},
+            {name:"Prendere decisioni", desc:"Scegliere un piano d'azione dopo aver considerato informazioni rilevanti e possibili alternative."},
+            {name:"Assumersi responsabilità", desc:"Accettare gli oneri di decisioni, risultati e conseguenze, incluso ammettere errori e imparare da essi."},
+            {name:"Mostrare consapevolezza cross-funzionale", desc:"Capire come diverse funzioni organizzative sono collegate e incorporare questa prospettiva nel proprio lavoro."}
+          ],
+          questions:[
+            {text:"Come responsabile di un negozio di abbigliamento, noti un recente calo della produttività e un aumento dei conflitti all'interno del team, incluso il supervisore recentemente promosso. Come lavoreresti con il team per migliorare il coordinamento e il processo decisionale?", type:"situational"},
+            {text:"Descrivi una situazione in cui hai dovuto coordinare il tuo team retail per raggiungere un importante obiettivo di vendita. Quali azioni specifiche hai intrapreso per allineare priorità e tempistiche tra le diverse funzioni del negozio?", type:"behavioral"}
+          ]
+        },
+        { name:"Mentoring",
+          dec:"Supervisionare, supportare e motivare gli altri per raggiungere gli obiettivi dell'organizzazione.",
+          drivers:[
+            {name:"Supervisionare", desc:"Osservare la performance, assicurando che gli standard siano rispettati."},
+            {name:"Coaching", desc:"Guidare i membri del team a sviluppare competenze, riflettere sulla propria performance e imparare per migliorare capacità e performance."},
+            {name:"Responsabilizzare il team", desc:"Creare le condizioni affinché i membri del team abbiano autonomia, risorse e sicurezza per prendere decisioni e agire."},
+            {name:"Motivare il team", desc:"Stimolare e sostenere gli sforzi dei membri del team verso il raggiungimento di obiettivi."},
+            {name:"Far crescere il team", desc:"Agevolare la crescita dei collaboratori attraverso training, progetti assegnati, feedback e supporti di carriera."},
+            {name:"Individuare il talento", desc:"Riconoscere capability needs attuali e futuri, individuando candidati con potenziale in linea con le richieste dell'organizzazione."}
+          ],
+          questions:[
+            {text:"Sei uno store manager e hai recentemente promosso il tuo miglior addetto alle vendite al ruolo di assistente manager. Tuttavia, noti che fatica a fare da mentore e a sviluppare il resto del team. La produttività e il morale sono diminuiti. Come faresti per osservare il suo approccio di mentoring, fornirgli feedback e supportarlo nel coaching del team?", type:"situational"},
+            {text:"Descrivi una situazione in cui hai dovuto fornire coaching e supporto a un nuovo dipendente che faticava a soddisfare le aspettative di performance nel tuo negozio di abbigliamento. Quali passi specifici hai intrapreso per aiutarlo a migliorare?", type:"behavioral"}
+          ]
+        }
+      ]},
+      { name:"Store Operations", color:"mc3", competenze:[
+        { name:"Organizzare e pianificare",
+          dec:"Stabilire obiettivi, sviluppare programmi, definire la priorità dei task e organizzare le risorse per raggiungere risultati in modo efficiente.",
+          drivers:[
+            {name:"Definire obiettivi", desc:"Definire obiettivi chiari, misurabili e vincolati alle tempistiche, per guidare l'azione."},
+            {name:"Sviluppare piani d'azione", desc:"Sviluppare piani divisi in più step e tempistiche per raggiungere gli obiettivi."},
+            {name:"Gestire progetti", desc:"Coordinare task, rimuovere ostacoli e assicurare il completamento dei progetti."},
+            {name:"Gestire il tempo", desc:"Allocare e programmare il proprio tempo in modo efficace per gestire scadenze e priorità."},
+            {name:"Gestire risorse", desc:"Assegnare e ottimizzare l'uso di persone, budget, strumenti e informazioni in supporto dei piani."},
+            {name:"Monitorare i progressi", desc:"Tenere traccia di milestones e indicatori di performance e mettere in atto azioni correttive in caso di deviazioni."}
+          ],
+          questions:[
+            {text:"Descrivi una situazione in cui hai dovuto gestire più priorità e risorse limitate per portare a termine un progetto importante per il tuo negozio. Quali sfide hai incontrato e come hai adattato il tuo approccio per garantire il successo del progetto?", type:"behavioral"},
+            {text:"Come responsabile di un negozio di abbigliamento, il tuo team fatica a gestire l'elevata domanda stagionale a causa di scorte limitate e ritardi nelle spedizioni. Come utilizzeresti le tue capacità di pianificazione e organizzazione per definire obiettivi di performance chiari?", type:"situational"}
+          ]
+        },
+        { name:"Business acumen",
+          dec:"Identificare e sfruttare opportunità commerciali, mantenendo una consapevolezza di mercato, e usare leve economiche e organizzative per creare valore.",
+          drivers:[
+            {name:"Monitorare il mercato", desc:"Mantenersi al corrente di trend di mercato, azioni dei competitor e bisogni dei clienti per anticipare i cambiamenti."},
+            {name:"Identificare le opportunità", desc:"Individuare gap o nuove combinazioni di risorse che possono essere trasformati in iniziative imprenditoriali praticabili."},
+            {name:"Anticipare i trend", desc:"Mostrare acume nel business per prevedere trend di mercato e perseguire opportunità commerciali con accuratezza."},
+            {name:"Tenere sotto controllo i costi", desc:"Gestire le spese in modo prudente per proteggere il margine e allocare le risorse in modo efficiente."},
+            {name:"Avere consapevolezza organizzativa", desc:"Mostrare consapevolezza verso limiti interni, priorità degli stakeholders e fattori strutturali che impattano sul successo."}
+          ],
+          questions:[
+            {text:"Il tuo negozio ha registrato un calo delle scorte e del traffico dei clienti per diversi trimestri. Il responsabile regionale ti ha dato un mese per presentare un piano di rilancio. Quali opportunità di prodotto o servizio individueresti per recuperare redditività?", type:"situational"},
+            {text:"Descrivi una situazione in cui hai dovuto prendere una decisione critica sulla gestione dell'inventario che andava contro le preferenze di un cliente a causa di vincoli finanziari. Quali azioni hai intrapreso per gestire la situazione?", type:"behavioral"}
+          ]
+        }
+      ]},
+      { name:"Problem Solving & Agility", color:"mc4", competenze:[
+        { name:"Strategia e visione",
+          dec:"Sviluppare piani di alto livello e strutture concettuali che comprendano risorse, capacità e analisi del contesto per raggiungere obiettivi a lungo termine.",
+          drivers:[
+            {name:"Anticipare gli sviluppi", desc:"Nel formulare piani, considerare un contesto più ampio, conseguenze a lungo termine e le prospettive di più stakeholder."},
+            {name:"Bilanciare le strategie", desc:"Prioritizzare le attività basandosi sul loro impatto, in maniera ragionata e sostenibile."},
+            {name:"Determinare la vision", desc:"Creare una visione di futuro a lungo termine per ispirare impegno."},
+            {name:"Validare strategie", desc:"Ideare, implementare e riprodurre strategie fondate su analisi e capacità dell'organizzazione, per validarne l'impatto."}
+          ],
+          questions:[
+            {text:"Descrivi una recente situazione operativa in cui hai dovuto bilanciare le esigenze e le priorità del tuo negozio, dei clienti e del team. Quali fattori hai considerato nello sviluppare il tuo approccio e come hai valutato l'impatto della tua decisione?", type:"behavioral"},
+            {text:"Descrivi una situazione in cui hai dovuto prendere una decisione strategica che richiedeva di bilanciare priorità a breve e a lungo termine per il tuo team o il tuo negozio. Quali fattori hai considerato nel processo decisionale?", type:"behavioral"}
+          ]
+        },
+        { name:"Dimostrare expertise",
+          dec:"Usare e sviluppare conoscenza in un dominio specifico, abilità fisiche o strumenti tecnologici per eseguire i task in modo efficiente.",
+          drivers:[
+            {name:"Applicare competenze tecniche", desc:"Mettere in pratica conoscenza e metodi specializzati in modo accurato per completare compiti tecnici."},
+            {name:"Acquisire competenze tecniche", desc:"Sviluppare conoscenze nel proprio dominio in modo sistematico attraverso apprendimento e pratica."},
+            {name:"Condividere competenza", desc:"Condividere conoscenze tecniche con gli altri attraverso mezzi accessibili."},
+            {name:"Usare la tecnologia", desc:"Usare gli strumenti digitali o fisici più appropriati per supportare attività di analisi, comunicazione ed esecuzione dei compiti."},
+            {name:"Dimostrare abilità manuali", desc:"Applicare il proprio know-how nell'affrontare attività manuali."}
+          ],
+          questions:[
+            {text:"Immagina che una cliente sia in camerino e stia provando un capo che le piace. Come costruisci una proposta complementare coerente per completare il look e accompagnarla naturalmente all'acquisto?", type:"situational"},
+            {text:"Descrivi una situazione in cui hai aiutato un cliente esitante a comprendere e apprezzare le caratteristiche e i benefici di un capo di abbigliamento. Quali passaggi hai seguito per rispondere alle sue preoccupazioni e guidarlo verso una scelta soddisfacente?", type:"behavioral"}
+          ]
+        }
+      ]},
+      { name:"Brand Storytelling", color:"mc2", competenze:[
+        { name:"Narrative Communication",
+          dec:"La capacità di utilizzare messaggi strutturati come storie per raggiungere un obiettivo comunicativo (informare, persuadere, motivare, intrattenere) in un pubblico specifico.",
+          drivers:[
+            {name:"Veicolare un messaggio", desc:"Trasportare gli ascoltatori nel mondo della storia trasmettendo una trama coerente, immagini vivide e una bassa richiesta cognitiva."},
+            {name:"Mappatura emotiva", desc:"Identificare e mappare le emozioni per colpire e motivare gli ascoltatori."},
+            {name:"Identificazione dell'audience", desc:"Riconoscere gli ascoltatori e adattare il linguaggio, il tono e i dettagli della storia di conseguenza."},
+            {name:"Riduzione di resistenza", desc:"Ridurre lo scetticismo degli ascoltatori usando empatia, prove chiare e un inquadramento persuasivo."},
+            {name:"Consapevolezza culturale", desc:"Adattarsi ai valori, alle norme e agli stili comunicativi di diversi gruppi culturali quando si racconta una storia."}
+          ],
+          questions:[
+            {text:"Immagina che una cliente individui un capo costoso e ti chieda perché ha questo prezzo o cosa lo renda 'di valore'. Come glielo spiegheresti, utilizzando la tua conoscenza dei materiali?", type:"situational"},
+            {text:"Immagina che entri una cliente fidelizzata e che tu abbia a disposizione le informazioni del programma fedeltà. Come le usi per conoscerla meglio e proporle una vendita più personalizzata?", type:"situational"}
+          ]
+        }
+      ]}
     ]
   }
 };
 
-// ────────────────────────────────────────────────────────────
-// STATE
-// ────────────────────────────────────────────────────────────
-let currentRole = 'sa';
-let currentView = 'overview';
-let currentMacroIdx = null;
-let currentCompIdx = null;
+// ── STATE ─────────────────────────────────────────────────────
+let role = 'sa';
+let view = 'overview'; // 'overview' | 'detail'
+let selMacro = null;
+let selComp = null;
 let openMacros = {};
 
-// ────────────────────────────────────────────────────────────
-// UTILITIES
-// ────────────────────────────────────────────────────────────
-function getRoleData() { return DATA[currentRole]; }
+// ── HELPERS ───────────────────────────────────────────────────
+function rd() { return DATA[role]; }
 
-function countStats(role) {
-  const d = DATA[role];
-  let comps = 0, drivers = 0, questions = 0;
-  let macros = d.macro.length;
-  d.macro.forEach(m => {
-    comps += m.competenze.length;
-    m.competenze.forEach(c => {
-      drivers += c.drivers.length;
-      questions += c.questions.length;
-    });
-  });
-  return { macros, comps, drivers, questions };
+function stats() {
+  let macros = rd().macro.length, comps = 0, drivers = 0, questions = 0;
+  rd().macro.forEach(m => { comps += m.competenze.length; m.competenze.forEach(c => { drivers += c.drivers.length; questions += c.questions.length; }); });
+  return {macros, comps, drivers, questions};
 }
 
-// ────────────────────────────────────────────────────────────
-// RENDER SIDEBAR
-// ────────────────────────────────────────────────────────────
-function renderSidebar() {
-  const d = getRoleData();
-  let html = `<div class="sidebar-section-label">Aree di Competenza</div>`;
+function allComps() {
+  const list = [];
+  rd().macro.forEach((m, mi) => m.competenze.forEach((c, ci) => list.push([mi, ci])));
+  return list;
+}
 
-  html += `<div class="macro-group">
-    <button class="macro-btn ${currentView === 'overview' ? 'active' : ''}" onclick="showOverview()">
-      <span class="macro-dot-label">
-        <span style="font-size:13px">⬡</span> Panoramica
-      </span>
-    </button>
-  </div>`;
+// ── ICONS (inline SVG, lucide style) ──────────────────────────
+const icons = {
+  grid: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
+  chevron: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>`,
+  arrowLeft: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+  arrowRight: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+};
+
+// ── SIDEBAR RENDER ─────────────────────────────────────────────
+function renderSidebar() {
+  const d = rd();
+  let h = '';
+
+  h += `<div class="sidebar-label" style="margin-top:8px">Navigazione</div>`;
+  h += `<button class="nav-overview ${view==='overview'?'active':''}" onclick="goOverview()">
+    ${icons.grid} Panoramica
+  </button>`;
+
+  h += `<div class="sidebar-label" style="margin-top:16px">Competenze</div>`;
 
   d.macro.forEach((m, mi) => {
-    const isOpen = !!openMacros[currentRole + mi];
-    html += `<div class="macro-group">
-      <button class="macro-btn ${isOpen ? 'open' : ''}" onclick="toggleMacro(${mi})">
-        <span class="macro-dot-label">
+    const key = role + mi;
+    const isOpen = !!openMacros[key];
+    h += `<div class="macro-group">
+      <button class="macro-btn ${isOpen?'open':''}" onclick="toggleMacro(${mi})">
+        <span class="macro-btn-left">
           <span class="macro-dot ${m.color}"></span>
           ${m.name}
         </span>
-        <span class="macro-chevron">▶</span>
+        <span class="macro-chevron">${icons.chevron}</span>
       </button>
-      <div class="comp-list ${isOpen ? 'open' : ''}">`;
+      <div class="comp-list ${isOpen?'open':''}">`;
     m.competenze.forEach((c, ci) => {
-      const isActive = currentView === 'detail' && currentMacroIdx === mi && currentCompIdx === ci;
-      html += `<button class="comp-btn ${isActive ? 'active' : ''}" onclick="showDetail(${mi},${ci})">${c.name}</button>`;
+      const active = view==='detail' && selMacro===mi && selComp===ci;
+      h += `<button class="comp-btn ${active?'active':''}" onclick="goDetail(${mi},${ci})">${c.name}</button>`;
     });
-    html += `</div></div>`;
+    h += `</div></div>`;
   });
 
-  document.getElementById('sidebar').innerHTML = html;
+  document.getElementById('sidebar').innerHTML = h;
 }
 
-// ────────────────────────────────────────────────────────────
-// RENDER MAIN OVERVIEW
-// ────────────────────────────────────────────────────────────
+// ── OVERVIEW ───────────────────────────────────────────────────
 function renderOverview() {
-  const d = getRoleData();
-  const role = currentRole === 'sa' ? 'Sales Advisor' : 'Store Manager';
-  const s = countStats(currentRole);
+  const d = rd();
+  const s = stats();
+  const roleLabel = role==='sa' ? 'Sales Advisor' : 'Store Manager';
 
-  let html = `
-  <div class="overview-header">
-    <div class="overview-title">${role}</div>
-    <div class="overview-sub">Framework Competenze Skillvue</div>
+  let h = `
+  <div class="page-header">
+    <div class="page-title">${roleLabel}</div>
+    <div class="page-sub">Framework di valutazione delle competenze Skillvue</div>
   </div>
+
   <div class="stats-row">
     <div class="stat-card"><div class="stat-num">${s.macros}</div><div class="stat-label">Aree Macro</div></div>
     <div class="stat-card"><div class="stat-num">${s.comps}</div><div class="stat-label">Competenze</div></div>
     <div class="stat-card"><div class="stat-num">${s.drivers}</div><div class="stat-label">Driver Comportamentali</div></div>
     <div class="stat-card"><div class="stat-num">${s.questions}</div><div class="stat-label">Domande Assessment</div></div>
   </div>
-  <div class="section-title">Aree di Competenza</div>
+
+  <div class="section-label">Aree di Competenza</div>
   <div class="macro-cards">`;
 
   d.macro.forEach((m, mi) => {
-    const compNames = m.competenze.map(c => c.name);
-    html += `<div class="macro-card ${m.color}" onclick="expandMacro(${mi})">
-      <div class="macro-card-title">${m.name}</div>
-      <div class="macro-card-meta">${m.competenze.length} competenz${m.competenze.length === 1 ? 'a' : 'e'} · ${m.competenze.reduce((a,c) => a + c.drivers.length, 0)} driver</div>
-      <div class="macro-card-chips">${compNames.map(n => `<span class="chip">${n}</span>`).join('')}</div>
+    h += `<div class="macro-card ${m.color}" onclick="expandMacro(${mi})" style="cursor:pointer">
+      <div class="macro-card-header">
+        <div class="macro-card-title">${m.name}</div>
+      </div>
+      <div class="macro-card-meta">${m.competenze.length} competenz${m.competenze.length===1?'a':'e'} · ${m.competenze.reduce((a,c)=>a+c.drivers.length,0)} driver · ${m.competenze.reduce((a,c)=>a+c.questions.length,0)} domande</div>
+      <div class="macro-card-chips">
+        ${m.competenze.map(c=>`<span class="tag tag-outline">${c.name}</span>`).join('')}
+      </div>
     </div>`;
   });
 
-  html += `</div>`;
-  document.getElementById('main').innerHTML = html;
+  h += `</div>`;
+  document.getElementById('main-content').innerHTML = h;
 }
 
-// ────────────────────────────────────────────────────────────
-// RENDER DETAIL
-// ────────────────────────────────────────────────────────────
+// ── DETAIL ─────────────────────────────────────────────────────
 function renderDetail(mi, ci) {
-  const d = getRoleData();
+  const d = rd();
   const macro = d.macro[mi];
   const comp = macro.competenze[ci];
 
-  let html = `
-  <div class="detail-header">
-    <div class="breadcrumb">${macro.name} <span>›</span> ${comp.name}</div>
-    <div class="detail-title">${comp.name}</div>
-    <div class="detail-declaratoria">${comp.dec}</div>
+  const all = allComps();
+  const idx = all.findIndex(([m,c]) => m===mi && c===ci);
+  const prev = all[idx-1];
+  const next = all[idx+1];
+
+  let h = `
+  <div class="breadcrumb">
+    <button onclick="goOverview()" style="color:var(--primary);font-size:13px;cursor:pointer;background:none;border:none;font-family:inherit">Panoramica</button>
+    <span class="breadcrumb-sep">›</span>
+    <span style="color:var(--n500)">${macro.name}</span>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-active">${comp.name}</span>
   </div>
 
-  <div class="section-title">Driver Comportamentali</div>
-  <div class="driver-grid">`;
+  <div style="margin-bottom:24px">
+    <div class="detail-title">${comp.name}</div>
+    <div class="declaratoria">${comp.dec}</div>
+  </div>
+
+  <div class="section-label">Driver Comportamentali</div>
+  <div class="driver-table">
+    <div class="driver-table-head">
+      <span>Driver</span>
+      <span>Descrizione</span>
+    </div>`;
 
   comp.drivers.forEach(dr => {
-    html += `<div class="driver-row">
+    h += `<div class="driver-row">
       <div class="driver-name">${dr.name}</div>
       <div class="driver-desc">${dr.desc}</div>
     </div>`;
   });
 
-  html += `</div>
-  <div class="section-title" style="margin-top:32px">Domande di Assessment</div>
-  <div class="question-cards">`;
+  h += `</div>
+  <div class="section-label">Domande di Assessment</div>
+  <div class="question-list">`;
 
   comp.questions.forEach((q, qi) => {
     const typeLabel = q.type === 'behavioral' ? 'Comportamentale' : 'Situazionale';
-    html += `<div class="question-card">
-      <div class="q-num">${qi + 1}</div>
-      <div class="q-type ${q.type}">${typeLabel}</div>
+    const typeClass = q.type === 'behavioral' ? 'tag-info' : 'tag-success';
+    h += `<div class="question-card">
+      <div class="question-card-top">
+        <span class="q-num">${qi+1}</span>
+        <span class="tag ${typeClass}">${typeLabel}</span>
+      </div>
       <div class="q-text">${q.text}</div>
     </div>`;
   });
 
-  html += `</div>`;
+  h += `</div>
+  <div class="detail-nav">
+    <div>`;
 
-  // Navigation
-  const allComps = [];
-  d.macro.forEach((m, mIdx) => m.competenze.forEach((c, cIdx) => allComps.push([mIdx, cIdx])));
-  const curIdx = allComps.findIndex(([m, c]) => m === mi && c === ci);
-  const prev = allComps[curIdx - 1];
-  const next = allComps[curIdx + 1];
-
-  html += `<div style="display:flex;gap:12px;margin-top:36px;justify-content:flex-end">`;
   if (prev) {
     const pm = d.macro[prev[0]].competenze[prev[1]].name;
-    html += `<button onclick="showDetail(${prev[0]},${prev[1]})" style="padding:9px 18px;border:1px solid var(--divider);border-radius:7px;cursor:pointer;background:var(--white);font-family:'Mona Sans',sans-serif;font-size:13px;color:var(--slate)">← ${pm}</button>`;
+    h += `<button class="btn btn-outline-primary" onclick="goDetail(${prev[0]},${prev[1]})">${icons.arrowLeft} ${pm}</button>`;
+  } else {
+    h += `<button class="btn btn-outline-primary" onclick="goOverview()">${icons.arrowLeft} Panoramica</button>`;
   }
+
+  h += `</div><div>`;
+
   if (next) {
     const nm = d.macro[next[0]].competenze[next[1]].name;
-    html += `<button onclick="showDetail(${next[0]},${next[1]})" style="padding:9px 18px;border:1px solid var(--divider);border-radius:7px;cursor:pointer;background:var(--gold);font-family:'Mona Sans',sans-serif;font-size:13px;font-weight:600;color:var(--ink)">${nm} →</button>`;
+    h += `<button class="btn btn-solid-primary" onclick="goDetail(${next[0]},${next[1]})">${nm} ${icons.arrowRight}</button>`;
   }
-  html += `</div>`;
 
-  document.getElementById('main').innerHTML = html;
+  h += `</div></div>`;
+
+  document.getElementById('main-content').innerHTML = h;
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// ────────────────────────────────────────────────────────────
-// NAVIGATION
-// ────────────────────────────────────────────────────────────
-function showOverview() {
-  currentView = 'overview';
-  currentMacroIdx = null;
-  currentCompIdx = null;
-  renderOverview();
-  renderSidebar();
+// ── ACTIONS ────────────────────────────────────────────────────
+function goOverview() {
+  view = 'overview'; selMacro = null; selComp = null;
+  renderSidebar(); renderOverview();
 }
 
-function showDetail(mi, ci) {
-  currentView = 'detail';
-  currentMacroIdx = mi;
-  currentCompIdx = ci;
-  openMacros[currentRole + mi] = true;
-  renderDetail(mi, ci);
-  renderSidebar();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function goDetail(mi, ci) {
+  view = 'detail'; selMacro = mi; selComp = ci;
+  openMacros[role + mi] = true;
+  renderSidebar(); renderDetail(mi, ci);
 }
 
 function toggleMacro(mi) {
-  const key = currentRole + mi;
+  const key = role + mi;
   openMacros[key] = !openMacros[key];
   renderSidebar();
 }
 
 function expandMacro(mi) {
-  openMacros[currentRole + mi] = true;
-  showDetail(mi, 0);
+  openMacros[role + mi] = true;
+  goDetail(mi, 0);
 }
 
-function switchRole(role) {
-  currentRole = role;
-  currentView = 'overview';
-  currentMacroIdx = null;
-  currentCompIdx = null;
-  document.querySelectorAll('.role-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && role === 'sa') || (i === 1 && role === 'sm'));
+function switchRole(r) {
+  role = r;
+  view = 'overview'; selMacro = null; selComp = null;
+  document.querySelectorAll('.role-tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && r==='sa') || (i===1 && r==='sm'));
   });
-  renderSidebar();
-  renderOverview();
+  renderSidebar(); renderOverview();
 }
 
-// ────────────────────────────────────────────────────────────
-// INIT
-// ────────────────────────────────────────────────────────────
+// ── INIT ───────────────────────────────────────────────────────
 renderSidebar();
 renderOverview();
 </script>
